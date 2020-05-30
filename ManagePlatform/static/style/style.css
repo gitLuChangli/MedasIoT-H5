@@ -1,0 +1,142 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    font-size: 14px;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container-main {
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.logo-container {
+    width: 200px;
+    height: 60px;
+    align-items: center;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    border-bottom: 1px solid #4d4c61;
+}
+
+.header {
+    margin-left: 0px;
+    padding-left: 0px;
+    border-bottom: 1px solid #e6eae3;
+}
+
+.logo {
+    height: 48px;
+}
+
+.logo2 {
+    height: 60px;
+}
+
+.menu-btn {
+    font-size: 20px;
+    width: 48px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    font-style: bold;
+    float: left;
+    cursor: default;
+}
+
+.menu-btn:hover,
+.user-btn:hover,
+.u-bage:hover {
+    color: #6699ff;
+    background: #6699ff22;
+    transition: all .5s;
+    border-radius: 0;
+}
+
+.el-menu-item.is-active {
+    font-weight: bolder !important;
+    color: #ffffff !important;
+    background: #6699ff !important;
+}
+
+.el-menu-item i,
+.el-submenu__title i {
+    margin-right: 8px !important;
+}
+
+.el-menu-item {
+    padding-left: 52px !important;
+}
+
+.user-btn {
+    height: 60px;
+    margin: 0px;
+    padding: 0px 1px;
+    line-height: 60px;
+    border: none;
+    border-radius: 0;
+}
+
+.u-bage {
+    float: right;
+    height: 60px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.u-bage i {
+    height: 36px;
+    margin: 2px;
+    display: block;
+    font-size: 18px;
+    font-weight: bolder;
+    line-height: 28px;
+    margin-top: 16px;
+    color: #383838;
+}
+
+.el-badge__content.is-fixed {
+    top: 16px !important;
+    right: 26px !important;
+}
+
+.footer {
+    height: 32px !important;
+    line-height: 32px !important;
+    text-align: center;
+    color: #484848;
+    border-top: 1px solid #e6eae3;
+}
+
+.toolbar {
+    margin: 0px;
+    background: #ffffff;
+    padding: 16px;
+    border-bottom: 1px solid #e6eae3;
+}
+
+.title {
+    font-size: 18px;
+    line-height: 24px;
+}
+
+.content {
+    background: #ffffff;
+    margin: 16px;
+    padding: 16px;
+}
+
+.form {
+    width: 500px;
+    margin: 16px auto;
+    background: #ffffff;
+    padding: 16px;
+}
