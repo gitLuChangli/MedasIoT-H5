@@ -3,54 +3,111 @@ import axios from 'axios'
 const host = 'http://127.0.0.1:8080'
 
 /**
- * 获取所有部门
- */
-export async function getCompany() {
-    return axios({
-        url: `${host}/api/company/query`,
-        method: 'POST'
-    })
-}
-
-/**
- * 获取下属部门
- * @param {*} id    部门id
- * @param {*} depth 下属部门深度，获取全部传入all
- */
-export async function getCompanyById(id, depth) {
-    return axios({
-        url: `${host}/api/company/query?ancestor=${id}&depth=${depth}`,
-        method: 'POST'
-    })
-}
-
-/**
  * 创建部门
- * 
- * @param {*} act new,new_bo,new_bg,new_sg新增不同的部门
- *                edit, edit_bo, edit_bg, edit_sg修改部门的信息
- *                需要不同的权限的，或者后期可以修改成为一个，因为这个平台可以由我们自行维护
- * @param {*} json 
+ * @param {
+ *  code 费用代码，不为空
+ *  name 部门名称，不为空
+ *  details 部门详情
+ *  region 地区
+ *  province 省
+ *  city 市
+ *  county 县
+ *  address 地址
+ *  area 园区
+ *  ancestor 所属部门，从最高层级开始，逗号隔开
+ * } company 部门信息
  */
-export async function saveCompany(act, json) {
+export async function newCompany(company) {
     return axios({
-        url: `${host}/api/company/${act}`,
-        data: json,
-        method: 'POST'
+        url: `${host}/api/company/`,
+        data: company,
+        method: `post`
     })
 }
 
 /**
- * 启用或禁用部门
- * @param {*} id 
- * @param {*} status 
+ * 修改部门信息
+ * @param {
+ *  code 费用代码，不为空
+ *  name 部门名称，不为空
+ *  details 部门详情
+ *  region 地区
+ *  province 省
+ *  city 市
+ *  county 县
+ *  address 地址
+ *  area 园区
+ *  ancestor 所属部门，从最高层级开始，逗号隔开
+ * } company 部门信息
  */
-export async function disableCompany(id, status) {
+export async function editCompany(company) {
     return axios({
-        url: `${host}/api/company/disable?id=${id}&status=${status}`,
-        method: 'POST'
+        url: `${host}/api/company/`,
+        data: company,
+        method: `put`
     })
 }
+
+/**
+ * 启用/禁用部门
+ * @param {\\d+} companyId 部门编号
+ * @param {^[01]$} status 1：禁用，0启用
+ */
+export async function disableCompany(companyId, status) {
+    return axios({
+        url: `${host}/api/company/disable/${companyId}/${status}`,
+        method: `put`
+    })
+}
+
+/**
+ * 删除部门
+ * @param {\\d+} companyId 部门编号
+ */
+export async function deleteCompany(companyId) {
+    return axios({
+        url: `${host}/api/company/delete/${companyId}`,
+        method: `delete`
+    })
+}
+
+/**
+ * 获取所有的部门
+ */
+export async function getCompanies() {
+    return axios({
+        url: `${host}/api/company/descendants`,
+        method: `get`
+    })
+}
+
+/**
+ * 获取部门信息
+ * @param {\\d+} companyId 部门编号
+ */
+export async function getCompanyById(companyId) {
+    return axios({
+        url: `${host}/api/company/${companyId}`,
+        method: `get`
+    })
+}
+
+/**
+ * 获取该部门的下属部门
+ * @param {\\d+} companyId 部门编号
+ */
+export async function getCompanyDescendantsById(companyId) {
+    return axios({
+        url: `${host}/api/company/ancestor/${companyId}`,
+        method: `get`
+    })
+}
+
+
+
+
+
+
 
 /**
  * 新增或修改用户

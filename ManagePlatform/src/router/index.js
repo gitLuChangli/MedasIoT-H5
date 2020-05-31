@@ -40,7 +40,7 @@ export default new Router({
             },
             {
                 path: '/device/add',
-                name: '添加设备',
+                name: '录入设备',
                 component: (resolve) => require(['@/components/device/add'], resolve)
             },
             {

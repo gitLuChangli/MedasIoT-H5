@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="toolbar">
-			<p class="title">部门列表</p>			
+			<p class="title">部门列表</p>
 		</div>
 		<div class="toolbar" style="text-align: center">
 			<el-select v-model="subGroupId" placeholder="请选择次集团" size="mini" @change="subGroupChange">
@@ -51,7 +51,7 @@
 					<template slot-scope="scope">
 						<el-switch
 							v-model="scope.row.status"
-							:width="32"							
+							:width="32"
 							@change="handleDisableChange(scope.row)"
 							:active-value="0"
 							:inactive-value="1"

@@ -5,10 +5,10 @@
 		</div>
 		<div class="toolbar" style="text-align: center">
 			<el-radio-group v-model="action" size="small" @change="companyTypeChange">
-				<el-radio-button label="new">课别</el-radio-button>
-				<el-radio-button label="new_bo">事业处</el-radio-button>
-				<el-radio-button label="new_bg">事业群</el-radio-button>
-				<el-radio-button label="new_sg">次集团</el-radio-button>
+				<el-radio-button label="department">课别</el-radio-button>
+				<el-radio-button label="business_office">事业处</el-radio-button>
+				<el-radio-button label="business_group">事业群</el-radio-button>
+				<el-radio-button label="subgroup">次集团</el-radio-button>
 			</el-radio-group>
 		</div>
 		<el-form
@@ -21,17 +21,17 @@
 		>
 			<el-form-item label="请选择次集团" v-if="type > 0">
 				<el-select
-					v-model="company.subGroupId"
+					v-model="subgroupId"
 					placeholder="请选择次集团"
 					style="width: 500px"
-					@change="subGroupChange"
+					@change="subgroupChange"
 				>
-					<el-option v-for="item in subGroups" :key="item.id" :label="item.name" :value="item.id" />
+					<el-option v-for="item in subgroups" :key="item.id" :label="item.name" :value="item.id" />
 				</el-select>
 			</el-form-item>
 			<el-form-item label="请选择事业群" v-if="type > 1">
 				<el-select
-					v-model="company.businessGroupId"
+					v-model="businessGroupId"
 					placeholder="请选择事业群"
 					style="width: 500px"
 					@change="buninessGroupChange"
@@ -40,7 +40,7 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item label="请选择事业处" v-if="type > 2">
-				<el-select v-model="company.businessOfficeId" placeholder="请选择事业处" style="width: 500px">
+				<el-select v-model="businessOfficeId" placeholder="请选择事业处" style="width: 500px">
 					<el-option v-for="item in businessOffices" :key="item.id" :label="item.name" :value="item.id" />
 				</el-select>
 			</el-form-item>
@@ -51,7 +51,7 @@
 				<el-input v-model="company.name"></el-input>
 			</el-form-item>
 			<el-form-item label="部门说明">
-				<el-input v-model="company.description"></el-input>
+				<el-input v-model="company.details"></el-input>
 			</el-form-item>
 			<el-form-item label="厂区" v-if="type > 2">
 				<el-input v-model="company.area"></el-input>
@@ -64,22 +64,23 @@
 	</div>
 </template>
 <script>
-	import { getCompany, saveCompany } from '../../api/iot.js'
+	import { getCompanies, newCompany } from '../../api/iot.js'
 
 	export default {
 		data() {
 			return {
-				action: 'new',
+				action: 'department',
 				company: {
-					subGroupId: '',
-					businessGroupId: '',
-					businessOfficeId: '',
+					ancestor: '',
 					code: '',
 					name: '',
-					description: '',
+					details: '',
 					area: ''
 				},
-				subGroups: [],
+				subgroupId: '',
+				businessGroupId: '',
+				businessOfficeId: '',
+				subgroups: [],
 				businessGroups: [],
 				businessOffices: [],
 				type: 3,
@@ -91,23 +92,23 @@
 			}
 		},
 		mounted() {
-			getCompany().then(response => {
-				if (response.data.code == 1) {
-					this.subGroups = response.data.companies
+			getCompanies().then(response => {
+				if (response.data.code === 1) {
+					this.subgroups = response.data.companies
 				}
 			})
 		},
 		methods: {
 			companyTypeChange: function (val) {
-				if (val == 'new') this.type = 3
-				else if (val == 'new_bo') this.type = 2
-				else if (val == 'new_bg') this.type = 1
+				if (val === 'department') this.type = 3
+				else if (val === 'business_office') this.type = 2
+				else if (val === 'business_group') this.type = 1
 				else this.type = 0
 			},
-			subGroupChange: function (val) {
-				for (var i = 0; i < this.subGroups.length; i++) {
-					if (this.subGroups[i].id == val) {
-						this.businessGroups = this.subGroups[i].descendant
+			subgroupChange: function (val) {
+				for (var i = 0; i < this.subgroups.length; i++) {
+					if (this.subgroups[i].id === val) {
+						this.businessGroups = this.subgroups[i].descendant
 						this.company.businessGroupId = ''
 						this.company.businessOfficeId = ''
 						break
@@ -116,7 +117,7 @@
 			},
 			buninessGroupChange: function (val) {
 				for (var i = 0; i < this.businessGroups.length; i++) {
-					if (this.businessGroups[i].id == val) {
+					if (this.businessGroups[i].id === val) {
 						this.businessOffices = this.businessGroups[i].descendant
 						break
 					}
@@ -125,8 +126,17 @@
 			newCompanyClick: function (e) {
 				this.$refs[`company`].validate((valid) => {
 					if (valid) {
-						saveCompany(this.action, this.company).then(res => {
-							if (res.data.code == 1) {
+						if (this.type === 3) {
+							this.company.ancestor = ''
+						} else if (this.type === 2) {
+							this.company.ancestor = `${this.subgroupId}`
+						} else if (this.type === 1) {
+							this.company.ancestor = `${this.subgroupId},${this.businessGroupId}`
+						} else {
+							this.company.ancestor = `${this.subgroupId},${this.businessGroupId},${this.businessOfficeId}`
+						}
+						newCompany(this.action, this.company).then(res => {
+							if (res.data.code === 1) {
 								this.$message({
 									message: '新增成功',
 									type: 'success',
@@ -148,11 +158,14 @@
 			},
 			resetClick: function (e) {
 				this.$refs['company'].resetFields()
-				this.company.subGroupId = ''
-				this.company.businessGroupId = ''
-				this.company.businessOfficeId = ''
+				this.subgroupId = ''
+				this.businessGroupId = ''
+				this.businessOfficeId = ''
 				this.company.code = ''
 				this.company.name = ''
+				this.company.details = ''
+				this.company.area = ''
+				this.company.ancestor = ''
 			}
 		}
 	}

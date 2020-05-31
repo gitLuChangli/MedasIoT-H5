@@ -158,7 +158,7 @@
 								path: '/device/type'
 							},
 							{
-								name: '添加设备',
+								name: '录入设备',
 								path: '/device/add'
 							},
 							{
