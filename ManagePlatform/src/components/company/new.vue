@@ -19,7 +19,7 @@
 			style="width: 500px; margin: 16px auto; background: #ffffff; padding: 16px;"
 			:rules="rules"
 		>
-			<el-form-item label="请选择次集团" v-if="type > 0">
+			<el-form-item label="请选择次集团" v-show="type > 0">
 				<el-select
 					v-model="subgroupId"
 					placeholder="请选择次集团"
@@ -29,7 +29,7 @@
 					<el-option v-for="item in subgroups" :key="item.id" :label="item.name" :value="item.id" />
 				</el-select>
 			</el-form-item>
-			<el-form-item label="请选择事业群" v-if="type > 1">
+			<el-form-item label="请选择事业群" v-show="type > 1">
 				<el-select
 					v-model="businessGroupId"
 					placeholder="请选择事业群"
@@ -39,7 +39,7 @@
 					<el-option v-for="item in businessGroups" :key="item.id" :label="item.name" :value="item.id" />
 				</el-select>
 			</el-form-item>
-			<el-form-item label="请选择事业处" v-if="type > 2">
+			<el-form-item label="请选择事业处" v-show="type > 2">
 				<el-select v-model="businessOfficeId" placeholder="请选择事业处" style="width: 500px">
 					<el-option v-for="item in businessOffices" :key="item.id" :label="item.name" :value="item.id" />
 				</el-select>
@@ -53,7 +53,7 @@
 			<el-form-item label="部门说明">
 				<el-input v-model="company.details"></el-input>
 			</el-form-item>
-			<el-form-item label="厂区" v-if="type > 2">
+			<el-form-item label="厂区" v-show="type > 2">
 				<el-input v-model="company.area"></el-input>
 			</el-form-item>
 			<el-form-item>
@@ -92,13 +92,16 @@
 			}
 		},
 		mounted() {
-			getCompanies().then(response => {
-				if (response.data.code === 1) {
-					this.subgroups = response.data.companies
-				}
-			})
+			this.getCompanies()
 		},
 		methods: {
+			getCompanies() {
+				getCompanies().then(response => {
+					if (response.status === 200) {
+						this.subgroups = response.data.data
+					}
+				})
+			},
 			companyTypeChange: function (val) {
 				if (val === 'department') this.type = 3
 				else if (val === 'business_office') this.type = 2
@@ -108,9 +111,9 @@
 			subgroupChange: function (val) {
 				for (var i = 0; i < this.subgroups.length; i++) {
 					if (this.subgroups[i].id === val) {
-						this.businessGroups = this.subgroups[i].descendant
-						this.company.businessGroupId = ''
-						this.company.businessOfficeId = ''
+						this.businessGroups = this.subgroups[i].descendants
+						this.businessGroupId = ''
+						this.businessOfficeId = ''
 						break
 					}
 				}
@@ -118,7 +121,8 @@
 			buninessGroupChange: function (val) {
 				for (var i = 0; i < this.businessGroups.length; i++) {
 					if (this.businessGroups[i].id === val) {
-						this.businessOffices = this.businessGroups[i].descendant
+						this.businessOffices = this.businessGroups[i].descendants
+						this.businessOfficeId = ''
 						break
 					}
 				}
@@ -126,26 +130,27 @@
 			newCompanyClick: function (e) {
 				this.$refs[`company`].validate((valid) => {
 					if (valid) {
-						if (this.type === 3) {
+						if (this.type === 0) {
 							this.company.ancestor = ''
-						} else if (this.type === 2) {
-							this.company.ancestor = `${this.subgroupId}`
 						} else if (this.type === 1) {
+							this.company.ancestor = `${this.subgroupId}`
+						} else if (this.type === 2) {
 							this.company.ancestor = `${this.subgroupId},${this.businessGroupId}`
 						} else {
 							this.company.ancestor = `${this.subgroupId},${this.businessGroupId},${this.businessOfficeId}`
 						}
-						newCompany(this.action, this.company).then(res => {
-							if (res.data.code === 1) {
+						newCompany(this.company).then(res => {
+							if (res.status === 200) {
 								this.$message({
 									message: '新增成功',
 									type: 'success',
 									showClose: true
 								})
 								this.resetClick(e)
+								this.getCompanies()
 							} else {
 								this.$message({
-									message: '新增失败',
+									message: '新增失敗',
 									type: 'error',
 									showClose: true
 								})
@@ -156,8 +161,7 @@
 					}
 				})
 			},
-			resetClick: function (e) {
-				this.$refs['company'].resetFields()
+			resetClick: function (e) {				
 				this.subgroupId = ''
 				this.businessGroupId = ''
 				this.businessOfficeId = ''
@@ -166,6 +170,7 @@
 				this.company.details = ''
 				this.company.area = ''
 				this.company.ancestor = ''
+				this.$refs['company'].resetFields()
 			}
 		}
 	}

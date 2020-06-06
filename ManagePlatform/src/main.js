@@ -27,6 +27,11 @@ Vue.prototype.$echarts = echarts
 
 Vue.prototype.RES_URL = "http://127.0.0.1:8080"
 
+axios.interceptors.response.use(response => {
+    console.log(response)
+    return response
+})
+
 NProgress.configure({
     easing: 'ease', // 动画方式    
     speed: 500, // 递增进度条的速度    

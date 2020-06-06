@@ -73,12 +73,12 @@
 					</el-badge>
 					<i class="el-icon-monitor menu-btn" style="float: right" />
 				</el-header>
-				<el-main style="background: #f5f7f9; margin: 0px; padding: 0px; min-width: 1000px">
+				<el-main style="background: #f5f7f9; margin: 0px; padding: 0px; min-width: 1000px">					
 					<router-view />
 				</el-main>
 				<el-footer class="footer">
-					Copyright © 2020 MedasIoT C次集团华南检测中心物联网产品部
-					<b>系统版本：1.0.0.1</b>
+					Copyright © 2020 medasiot C次集團華南檢測中心物聯網產品部
+					<b>系統版本：1.0.0.1</b>
 				</el-footer>
 			</el-container>
 		</el-container>
@@ -96,7 +96,7 @@
 				currentPath: [],
 				menuData: [
 					{
-						name: '首页',
+						name: '首頁',
 						path: '/',
 						icon: 'el-icon-s-data',
 						items: [
@@ -105,7 +105,7 @@
 								path: '/main',
 							},
 							{
-								name: '监控台',
+								name: '監控台',
 								path: '/view'
 							},
 							{
@@ -115,9 +115,9 @@
 						]
 					},
 					{
-						name: '部门管理',
+						name: '部門管理',
 						path: '/company',
-						icon: 'el-icon-s-cooperation',
+						icon: 'el-icon-office-building',
 						items: [
 							{
 								name: '部门列表',
@@ -130,46 +130,109 @@
 						]
 					},
 					{
-						name: '用户管理',
+						name: '用戶管理',
 						path: '/user',
 						icon: 'el-icon-s-custom',
 						items: [
 							{
-								name: '用户列表',
+								name: '用戶列表',
 								path: '/user/'
 							},
 							{
-								name: '停用列表',
+								name: '禁用列表',
 								path: '/user/disabled'
 							},
 							{
-								name: '新增用户',
+								name: '新增用戶',
 								path: '/user/new'
 							}
 						]
+					},					
+					{
+						name: '角色管理',
+						path: '/role',
+						icon: 'el-icon-s-flag',
+						items: {
+
+						}
 					},
 					{
-						name: '设备管理',
+						name: '權限管理',
+						path: '/authority',
+						icon: 'el-icon-s-cooperation',
+						items: [
+							
+						]
+					},
+					{
+						name: '資源管理',
+						path: '/res',
+						icon: 'el-icon-menu',
+						items: [
+							{
+								name: '菜單管理',
+								path: '/res/menu'
+							},
+							{
+								name: '按鈕管理',
+								path: '/res/button'
+							},
+							{
+								name: '新增資源',
+								path: '/res/new'
+							}						
+						]
+					},
+					{
+						name: '應用管理',
+						path: '/app',
+						icon: 'el-icon-s-promotion',
+						items: []
+					},
+					{
+						name: '消息管理',
+						path: '/msg',
+						icon: 'el-icon-s-comment',
+						items: []
+					},
+					{
+						name: '設備管理',
 						path: '/device/',
 						icon: 'el-icon-cpu',
 						items: [
 							{
-								name: '设备类型',
+								name: '設備類型',
 								path: '/device/type'
 							},
 							{
-								name: '录入设备',
+								name: '錄入設備',
 								path: '/device/add'
 							},
 							{
-								name: '设备列表',
+								name: '設備列表',
 								path: '/device/list'
 							},
 							{
-								name: '生产数据',
+								name: '生產數據',
 								path: '/device/data'
+							},
+							{
+								name: '異常數據',
+								path: '/device/exception'
 							}
 						]
+					},
+					{
+						name: '系統管理',
+						path: '/system',
+						icon: 'el-icon-s-tools',
+						items: []
+					},
+					{
+						name: '個人中心',
+						path: '/me',
+						icon: 'el-icon-s-help',
+						items: []
 					}
 				]
 			}
@@ -193,6 +256,23 @@
 					name: val1.name
 				})
 				this.currentPath.push(val2)
+			},
+			removeTab(targetName) {
+				let _tabs = this.tabs;
+				let activeName = this.focus_tab;
+				if (activeName === targetName) {
+					_tabs.forEach((tab, index) => {
+						if (tab.name === targetName) {
+							let nextTab = _tabs[index + 1] || _tabs[index - 1]
+							if (nextTab) {
+								activeName = nextTab.name;
+							}
+						}
+					})
+				}
+				
+				this.focus_tab = activeName;
+				this.tabs = _tabs.filter(tab => tab.name !== targetName)
 			}
 		}
 	}

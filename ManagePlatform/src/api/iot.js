@@ -103,87 +103,147 @@ export async function getCompanyDescendantsById(companyId) {
     })
 }
 
-
-
-
-
-
-
 /**
- * 新增或修改用户
- * 
- * @param {*} isnew true新增，false修改
- * @param {*} json  用户信息
+ * 新增用户
+ * @param {
+ *  no 工号，不为空
+ *  name 姓名，不为空
+ *  email 邮箱地址，不为空
+ *  openId 微信公众工号ID
+ *  icivetId 香信ID
+ *  phone 手机号
+ *  ext 分机
+ *  companyIds 部门层级，不为空
+ *  roles 权限
+ * } user 
  */
-export async function saveUser(isnew, json) {
-    var act = isnew ? 'new' : 'edit'
+export async function newUser(user) {
     return axios({
-        url: `${host}/api/user/${act}`,
-        data: json,
-        method: 'POST'
+        url: `${host}/api/user/`,
+        method: `post`,
+        data: user
     })
 }
 
 /**
- * 获取用户
- * @param {*} ancestor 
- * @param {*} status 
- * @param {*} page 
- * @param {*} size 
+ * 查询用户
+ * @param {*} companyId 
+ * @param {*} status
+ * @param {*} page
+ * @param {*} size
  */
-export async function getUsers(ancestor, status, page, size) {
+export async function queryUsers(companyId, status, page, size) {
+    var _url = ''
+    if (companyId === '' || companyId == undefined) {
+        _url = `${host}/api/user/status/${status}?page=${page}&size=${size}`
+    } else {
+        _url = `${host}/api/user/company/${companyId}/${status}?page=${page}&size=${size}`
+    }
     return axios({
-        url: `${host}/api/user/query?ancestor=${ancestor}&page=${page}&size=${size}&status=${status}`,
-        method: 'POST'
+        url: _url,
+        method: `get`
     })
 }
 
 /**
  *  启用/禁用用户
  * 
- * @param {*} no 
+ * @param {*} userid 
  * @param {*} disable 
  */
-export async function disableUser(no, disable) {
+export async function disableUser(userid, disable) {
     return axios({
-        url: `${host}/api/user/disable?no=${no}&disable=${disable}`,
-        method: 'POST'
-    })
-}
-
-/**
- * 获取用户的组织关系
- * @param {*} no 
- */
-export async function getUserCascadeIds(no) {
-    return axios({
-        url: `${host}/api/user/query/cascade?no=${no}`,
-        method: 'POST'
+        url: `${host}/api/user/disable/${userid}/${disable}`,
+        method: `put`
     })
 }
 
 /**
  * 删除用户
  * 
- * @param {*} no 
+ * @param {*} userid 
  */
-export async function deleteUser(no) {
+export async function deleteUser(userid) {
     return axios({
-        url: `${host}/api/user/delete?no=${no}`,
-        method: 'POST'
+        url: `${host}/api/user/${userid}`,
+        method: `delete`
+    })
+}
+
+/**
+ * 查询该用户所属部门的层级关系
+ * @param {*} userid 
+ */
+export async function queryCompanyRelations(userid) {
+    return axios({
+        url: `${host}/api/user/company/relations/${userid}`,
+        method: `get`
+    })
+}
+
+/**
+ * 修改用户信息  
+ * @param {*} user  用户信息
+ */
+export async function updateUser(user) {
+    return axios({
+        url: `${host}/api/user/`,
+        method: `put`,
+        data: user
     })
 }
 
 /**
  * 重置密码
- * @param {*} no 
+ * @param {*} userid 
  */
-export async function resetPwd(no) {
+export async function resetPwd(userid) {
     return axios({
-        url: `${host}/api/user/reset_pwd?no=${no}`,
-        method: 'POST'
+        url: `${host}/api/user/reset_pwd/${userid}`,
+        method: `put`
     })
 }
+
+/**
+ * 新增资源
+ * @param {*} action 
+ * @param {*} res 
+ */
+export async function newResource(action, res) {
+    var _url = ''
+    if (action == 'menu') {
+        _url = `${host}/api/menu/`
+    } else {
+        _url = `${host}/api/button/`
+    }
+    return axios({
+        url: _url,
+        method: `post`,
+        data: res
+    })
+}
+
+/**
+ * 获取资源
+ * @param {*} action 
+ */
+export async function queryResources(action) {
+    var _url = ''
+    if (action === 'menu') {
+        _url = `${host}/api/menu/descendants`
+    } else {
+        _url = `${host}/api/button/descendants`
+    }
+    return axios({
+        url: _url,
+        method: `get`
+    })
+}
+
+
+
+
+
 
 export async function getDeviceType() {
     return axios({

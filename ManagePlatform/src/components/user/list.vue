@@ -1,16 +1,16 @@
 <template>
 	<div>
 		<div class="toolbar">
-			<p class="title">用户列表</p>
+			<p class="title">用戶列表</p>
 		</div>
 		<div class="toolbar" style="text-align: center">
-			<el-select v-model="subGroupId" placeholder="请选择次集团" size="mini" @change="subGroupChange">
-				<el-option v-for="item in subGroups" :key="item.id" :label="item.name" :value="item.id" />
+			<el-select v-model="subgroupId" placeholder="請選擇次集團" size="mini" @change="subgroupChange">
+				<el-option v-for="item in subgroups" :key="item.id" :label="item.name" :value="item.id" />
 			</el-select>
 			<i class="el-icon-arrow-right" style="color: #c0c0c0" />
 			<el-select
 				v-model="businessGroupId"
-				placeholder="请选择事业群"
+				placeholder="請選擇事業群"
 				size="mini"
 				style="width: 200px"
 				@change="buninessGroupChange"
@@ -42,10 +42,9 @@
 			<el-table :data="users" border stripe size="mini">
 				<el-table-column prop="no" label="工号" width="100" />
 				<el-table-column prop="name" label="姓名" align="center" width="130" />
-				<el-table-column prop="mail" label="邮箱" align="center" />
+				<el-table-column prop="email" label="邮箱" align="center" />
 				<el-table-column prop="phone" label="电话" align="center" width="120" />
-				<el-table-column prop="ext" label="分机" align="center" width="100" />
-				<el-table-column prop="openId" label="微信ID" align="center" width="200" />
+				<el-table-column prop="ext" label="分机" align="center" width="100" />				
 				<el-table-column label="修改" width="60px" align="center" fixed="right">
 					<template slot-scope="scope">
 						<el-button
@@ -82,8 +81,8 @@
 			</el-table>
 			<el-pagination
 				style="margin-top: 16px"
-				@size-change="getUsers"
-				@current-change="getUsers"
+				@size-change="queryUsers"
+				@current-change="queryUsers"
 				:current-page.sync="current_page"
 				:page-sizes="[10, 20, 30, 50]"
 				:page-size="page_size"
@@ -108,7 +107,7 @@
 						<el-input v-model="user.name" />
 					</el-form-item>
 					<el-form-item label="请输入邮箱" prop="mail">
-						<el-input v-model="user.mail" />
+						<el-input v-model="user.email" />
 					</el-form-item>
 					<el-form-item label="请输入手机号">
 						<el-input v-model="user.phone" />
@@ -124,8 +123,8 @@
 					</el-form-item>
 					<el-form-item label="请选择部门">
 						<el-cascader
-							v-model="user.cascadeIds"
-							:options="subGroups"
+							v-model="user.companyIds"
+							:options="subgroups"
 							style="width: 100%"
 							size="small"
 							:props="cascader_props"
@@ -142,16 +141,16 @@
 </template>
 <script>
 
-	import { getCompany, getUsers, saveUser, getUserCascadeIds, resetPwd, disableUser } from '../../api/iot.js'
+	import { getCompanies, queryUsers, updateUser, queryCompanyRelations, resetPwd, disableUser } from '../../api/iot.js'
 
 	export default {
 		data() {
 			return {
-				subGroups: [],
+				subgroups: [],
 				businessGroups: [],
 				businessOffices: [],
 				companies: [],
-				subGroupId: '',
+				subgroupId: '',
 				businessGroupId: '',
 				businessOfficeId: '',
 				companyId: '',
@@ -163,17 +162,17 @@
 				user: {
 					no: '',
 					name: '',
-					mail: '',
+					email: '',
 					openId: '',
 					icivetId: '',
 					ext: '',
 					phone: '',
-					cascadeIds: []
+					companyIds: []
 				},
 				cascader_props: {
 					label: 'name',
 					value: 'id',
-					children: 'descendant'
+					children: 'descendants'
 				},
 				show_edit: false,
 
@@ -184,24 +183,24 @@
 			}
 		},
 		mounted() {
-			getCompany().then(res => {
-				if (res.data.code == 1) {
-					this.subGroups = res.data.companies
+			getCompanies().then(res => {
+				if (res.status == 200) {
+					this.subgroups = res.data.data
 				}
 			})
-			this.getUsers('')
+			this.queryUsers('')
 		},
 		methods: {
-			subGroupChange: function (val) {
-				for (var i = 0; i < this.subGroups.length; i++) {
-					if (this.subGroups[i].id == val) {
-						this.businessGroups = this.subGroups[i].descendant
+			subgroupChange: function (val) {
+				for (var i = 0; i < this.subgroups.length; i++) {
+					if (this.subgroups[i].id == val) {
+						this.businessGroups = this.subgroups[i].descendants
 						this.businessOffices = []
 						this.companies = []
 						this.businessGroupId = ''
-						this.businessGroupId = ''
+						this.businessOfficeId = ''
 						this.companyId = ''
-						this.getUsers()
+						this.queryUsers()
 						break
 					}
 				}
@@ -209,11 +208,11 @@
 			buninessGroupChange: function (val) {
 				for (var i = 0; i < this.businessGroups.length; i++) {
 					if (this.businessGroups[i].id == val) {
-						this.businessOffices = this.businessGroups[i].descendant
+						this.businessOffices = this.businessGroups[i].descendants
 						this.companies = []
 						this.businessOfficeId = ''
 						this.companyId = ''
-						this.getUsers()
+						this.queryUsers()
 						break
 					}
 				}
@@ -221,17 +220,17 @@
 			businessOfficeChange: function (val) {
 				for (var i = 0; i < this.businessOffices.length; i++) {
 					if (this.businessOffices[i].id == val) {
-						this.companies = this.businessOffices[i].descendant
+						this.companies = this.businessOffices[i].descendants
 						this.companyId = ''
-						this.getUsers()
+						this.queryUsers()
 						break
 					}
 				}
 			},
 			companyChange: function (val) {
-				this.getUsers()
+				this.queryUsers()
 			},
-			getUsers() {
+			queryUsers() {
 				var val = ''
 				if (this.companyId != '') {
 					val = this.companyId
@@ -242,26 +241,33 @@
 				else if (this.businessGroupId != '') {
 					val = this.businessGroupId
 				}
-				else if (this.subGroupId != '') {
-					val = this.subGroupId
+				else if (this.subgroupId != '') {
+					val = this.subgroupId
 				}
 				this.users = []
-				getUsers(val, 0, this.current_page, this.page_size).then(res => {
-					if (res.data.code == 1) {
-						this.users = res.data.users
-						this.total = res.data.total
+				queryUsers(val, 0, this.current_page - 1, this.page_size).then(res => {
+					if (res.status == 200) {
+						if (res.data.data !== undefined) {
+							this.users = res.data.data.content
+							this.total = res.data.data.totalElements
+
+						} else {
+							this.users = []
+							this.total = 0
+						}	
 					}
 				})
 			},
 			editClick: function (val) {
-				this.user = val
-				this.getCascadeIds()
+				this.user = Object.assign({}, val)
+				this.queryCompanyRelations()
 			},
-			getCascadeIds() {
-				getUserCascadeIds(this.user.no).then(res => {
-					if (res.data.code == 1) {
-						this.user.cascadeIds = res.data.cascadeIds
+			queryCompanyRelations() {
+				queryCompanyRelations(this.user.id).then(res => {
+					if (res.status == 200) {
+						this.user.companyIds = res.data.data
 						this.show_edit = true
+						console.log(this.user.companyIds)
 					}
 				})
 			},
@@ -271,8 +277,8 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					resetPwd(val.no).then(res => {
-						if (res.data.code == 1) {
+					resetPwd(val.id).then(res => {
+						if (res.status == 200) {
 							this.$message({
 								type: 'success',
 								message: '重置成功',
@@ -294,14 +300,14 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					disableUser(val.no, 1).then(res => {
-						if (res.data.code == 1) {
+					disableUser(val.id, 1).then(res => {
+						if (res.status == 200) {
 							this.$message({
 								message: '停用成功',
 								type: 'success',
 								showClose: true
 							})
-							this.getUsers()
+							this.queryUsers()
 						} else {
 							this.$message({
 								message: '停用失败',
@@ -313,15 +319,15 @@
 				})
 			},
 			saveClick: function (e) {
-				saveUser(false, this.user).then(res => {
-					if (res.data.code == 1) {
+				updateUser(this.user).then(res => {
+					if (res.status == 200) {
 						this.$message({
 							type: 'success',
 							message: '修改成功',
 							showClose: true
 						})
 						this.show_edit = false
-						this.getUsers()
+						this.queryUsers()
 					} else {
 						this.$message({
 							type: 'error',
