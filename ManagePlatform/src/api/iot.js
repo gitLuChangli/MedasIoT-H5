@@ -17,7 +17,7 @@ const host = 'http://127.0.0.1:8080'
  *  ancestor 所属部门，从最高层级开始，逗号隔开
  * } company 部门信息
  */
-export async function newCompany(company) {
+export async function newCompany (company) {
     return axios({
         url: `${host}/api/company/`,
         data: company,
@@ -40,7 +40,7 @@ export async function newCompany(company) {
  *  ancestor 所属部门，从最高层级开始，逗号隔开
  * } company 部门信息
  */
-export async function editCompany(company) {
+export async function editCompany (company) {
     return axios({
         url: `${host}/api/company/`,
         data: company,
@@ -53,7 +53,7 @@ export async function editCompany(company) {
  * @param {\\d+} companyId 部门编号
  * @param {^[01]$} status 1：禁用，0启用
  */
-export async function disableCompany(companyId, status) {
+export async function disableCompany (companyId, status) {
     return axios({
         url: `${host}/api/company/disable/${companyId}/${status}`,
         method: `put`
@@ -64,7 +64,7 @@ export async function disableCompany(companyId, status) {
  * 删除部门
  * @param {\\d+} companyId 部门编号
  */
-export async function deleteCompany(companyId) {
+export async function deleteCompany (companyId) {
     return axios({
         url: `${host}/api/company/delete/${companyId}`,
         method: `delete`
@@ -74,7 +74,7 @@ export async function deleteCompany(companyId) {
 /**
  * 获取所有的部门
  */
-export async function getCompanies() {
+export async function getCompanies () {
     return axios({
         url: `${host}/api/company/descendants`,
         method: `get`
@@ -85,7 +85,7 @@ export async function getCompanies() {
  * 获取部门信息
  * @param {\\d+} companyId 部门编号
  */
-export async function getCompanyById(companyId) {
+export async function getCompanyById (companyId) {
     return axios({
         url: `${host}/api/company/${companyId}`,
         method: `get`
@@ -96,7 +96,7 @@ export async function getCompanyById(companyId) {
  * 获取该部门的下属部门
  * @param {\\d+} companyId 部门编号
  */
-export async function getCompanyDescendantsById(companyId) {
+export async function getCompanyDescendantsById (companyId) {
     return axios({
         url: `${host}/api/company/ancestor/${companyId}`,
         method: `get`
@@ -115,9 +115,9 @@ export async function getCompanyDescendantsById(companyId) {
  *  ext 分机
  *  companyIds 部门层级，不为空
  *  roles 权限
- * } user 
+ * } user
  */
-export async function newUser(user) {
+export async function newUser (user) {
     return axios({
         url: `${host}/api/user/`,
         method: `post`,
@@ -127,12 +127,12 @@ export async function newUser(user) {
 
 /**
  * 查询用户
- * @param {*} companyId 
+ * @param {*} companyId 部门编号
  * @param {*} status
  * @param {*} page
  * @param {*} size
  */
-export async function queryUsers(companyId, status, page, size) {
+export async function queryUsers (companyId, status, page, size) {
     var _url = ''
     if (companyId === '' || companyId == undefined) {
         _url = `${host}/api/user/status/${status}?page=${page}&size=${size}`
@@ -147,11 +147,10 @@ export async function queryUsers(companyId, status, page, size) {
 
 /**
  *  启用/禁用用户
- * 
- * @param {*} userid 
- * @param {*} disable 
+ * @param {*} userid  用户编号
+ * @param {*} disable 1：禁用，0：启用
  */
-export async function disableUser(userid, disable) {
+export async function disableUser (userid, disable) {
     return axios({
         url: `${host}/api/user/disable/${userid}/${disable}`,
         method: `put`
@@ -160,10 +159,9 @@ export async function disableUser(userid, disable) {
 
 /**
  * 删除用户
- * 
- * @param {*} userid 
+ * @param {*} userid 用户编号
  */
-export async function deleteUser(userid) {
+export async function deleteUser (userid) {
     return axios({
         url: `${host}/api/user/${userid}`,
         method: `delete`
@@ -172,9 +170,9 @@ export async function deleteUser(userid) {
 
 /**
  * 查询该用户所属部门的层级关系
- * @param {*} userid 
+ * @param {*} userid 用户编号
  */
-export async function queryCompanyRelations(userid) {
+export async function queryCompanyRelations (userid) {
     return axios({
         url: `${host}/api/user/company/relations/${userid}`,
         method: `get`
@@ -182,10 +180,10 @@ export async function queryCompanyRelations(userid) {
 }
 
 /**
- * 修改用户信息  
+ * 修改用户信息
  * @param {*} user  用户信息
  */
-export async function updateUser(user) {
+export async function updateUser (user) {
     return axios({
         url: `${host}/api/user/`,
         method: `put`,
@@ -195,9 +193,9 @@ export async function updateUser(user) {
 
 /**
  * 重置密码
- * @param {*} userid 
+ * @param {*} userid 用户编号
  */
-export async function resetPwd(userid) {
+export async function resetPwd (userid) {
     return axios({
         url: `${host}/api/user/reset_pwd/${userid}`,
         method: `put`
@@ -205,34 +203,35 @@ export async function resetPwd(userid) {
 }
 
 /**
- * 新增资源
- * @param {*} action 
- * @param {*} res 
+ * 新增/保存资源
+ * @param {*} modify true：修改，false：新增
+ * @param {*} action 资源类型
+ * @param {*} res 资源
  */
-export async function newResource(action, res) {
-    var _url = ''
-    if (action == 'menu') {
-        _url = `${host}/api/menu/`
+export async function saveResource (modify, action, res) {
+    var _url = `${host}/api/${action}/`
+    var _method = ''
+    if (modify) {
+        _method = `put`
     } else {
-        _url = `${host}/api/button/`
+        _method = `post`
     }
     return axios({
         url: _url,
-        method: `post`,
+        method: _method,
         data: res
     })
 }
 
 /**
  * 获取资源
- * @param {*} action 
+ * @param {*} action 资源类型
+ * @param {*} all 显示所有，包含禁用
  */
-export async function queryResources(action) {
-    var _url = ''
-    if (action === 'menu') {
-        _url = `${host}/api/menu/descendants`
-    } else {
-        _url = `${host}/api/button/descendants`
+export async function queryResources (action, all) {
+    var _url = `${host}/api/${action}/descendants`
+    if (all) {
+        _url += '?all=true'
     }
     return axios({
         url: _url,
@@ -240,19 +239,55 @@ export async function queryResources(action) {
     })
 }
 
+/**
+ * 启用禁用资源
+ * @param {*} action 资源类型
+ * @param {*} resid 资源编号
+ * @param {*} status 状态，1：禁用，0：启用
+ */
+export async function disableResource (action, resid, status) {
+    var _url = `${host}/api/${action}/disable/${resid}/${status}`
+    return axios({
+        url: _url,
+        method: `put`
+    })
+}
+
+/**
+ * 刪除资源
+ * @param {*} action 资源类型
+ * @param {*} resid 资源编号
+ */
+export async function deleteResource(action, resid) {
+    var _url = `${host}/api/${action}/${resid}`
+    return axios({
+        url: _url,
+        method: `delete`
+    })
+}
+
+/**
+ * 查看资源父级
+ * @param {*} action 资源类型
+ * @param {*} descendant 资源编号
+ */
+export async function queryAncestorsByDescendant(action, descendant) {
+    var _url = `${host}/api/${action}/ancestors/${descendant}`
+    return axios({
+        url: _url,
+        method: `get`
+    })
+}
 
 
-
-
-
-export async function getDeviceType() {
+export async function getDeviceType () {
     return axios({
         url: `${host}/api/dev/query`,
         method: 'POST'
     })
 }
 
-export async function saveDeviceType(isnew, json) {
+export async function saveDeviceType (isnew, json) {
     var act = isnew ? 'new' : 'edit'
     return axios({
         url: `${host}/api/dev/${act}`,
@@ -261,7 +296,7 @@ export async function saveDeviceType(isnew, json) {
     })
 }
 
-export async function newDeviceVersion(json) {
+export async function newDeviceVersion (json) {
     return axios({
         url: `${host}/api/dev/new/version`,
         method: 'POST',
@@ -269,21 +304,21 @@ export async function newDeviceVersion(json) {
     })
 }
 
-export async function deleteDevice(ids) {
+export async function deleteDevice (ids) {
     return axios({
         url: `${host}/api/dev/delete`,
         method: 'POST',
         data: ids
     })
 }
-export async function newDeviceItem(item) {
+export async function newDeviceItem (item) {
     return axios({
         url: `${host}/api/dev/item/new`,
         method: 'POST',
         data: item
     })
 }
-export async function getDeviceItems(deviceId, page, size) {
+export async function getDeviceItems (deviceId, page, size) {
     return axios({
         url: `${host}/api/dev/item/query?device=${deviceId}&page=${page}&size=${size}`,
         method: 'POST'

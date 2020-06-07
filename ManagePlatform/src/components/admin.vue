@@ -147,41 +147,6 @@
 								path: '/user/new'
 							}
 						]
-					},					
-					{
-						name: '角色管理',
-						path: '/role',
-						icon: 'el-icon-s-flag',
-						items: {
-
-						}
-					},
-					{
-						name: '權限管理',
-						path: '/authority',
-						icon: 'el-icon-s-cooperation',
-						items: [
-							
-						]
-					},
-					{
-						name: '資源管理',
-						path: '/res',
-						icon: 'el-icon-menu',
-						items: [
-							{
-								name: '菜單管理',
-								path: '/res/menu'
-							},
-							{
-								name: '按鈕管理',
-								path: '/res/button'
-							},
-							{
-								name: '新增資源',
-								path: '/res/new'
-							}						
-						]
 					},
 					{
 						name: '應用管理',
@@ -226,7 +191,18 @@
 						name: '系統管理',
 						path: '/system',
 						icon: 'el-icon-s-tools',
-						items: []
+						items: [{
+							name: '資源管理',
+							path: '/system/resource'
+						},
+						{
+							name: '權限管理',
+							path: '/system/authority'
+						},
+						{
+							name: '角色管理',
+							path: '/system/role'
+						}]
 					},
 					{
 						name: '個人中心',

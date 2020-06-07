@@ -54,19 +54,9 @@ export default new Router({
                     component: (resolve) => require(['@/components/device/data'], resolve)
                 },
                 {
-                    path: '/res/menu',
-                    name: '菜單管理',
-                    component: (resolve) => require(['@/components/resource/menu'], resolve)
-                },
-                {
-                    path: '/res/button',
-                    name: '按鈕管理',
-                    component: (resolve) => require(['@/components/resource/menu'], resolve)
-                },
-                {
-                    path: '/res/new',
-                    name: '新增資源',
-                    component: (resolve) => require(['@/components/resource/new'], resolve)
+                    path: '/system/resource',
+                    name: '资源管理',
+                    component: (resolve) => require(['@/components/system/resource'], resolve)
                 }
             ]
         },

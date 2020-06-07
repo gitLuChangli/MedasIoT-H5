@@ -36,13 +36,13 @@
     }
     .header {
         width: 100%;
-        height: 56px;
+        height: 60px;
         background: #393f4c;
-        line-height:  64px;
+        line-height:  60px;
         box-shadow: 0 3px 6px #00000016;
     }
     .logo {
-        padding: 4px 16px; height: 48px;
+        padding: 6px 16px; height: 48px;
     }
     .login {
         -webkit-border-radius: 5px;

@@ -30,7 +30,9 @@ CREATE TABLE `tb_button` (
   `name` varchar(45) NOT NULL,
   `status` int(11) DEFAULT NULL,
   `url` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `method` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_button_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -40,6 +42,7 @@ CREATE TABLE `tb_button` (
 
 LOCK TABLES `tb_button` WRITE;
 /*!40000 ALTER TABLE `tb_button` DISABLE KEYS */;
+INSERT INTO `tb_button` VALUES (57406125863075840,NULL,'部門按鈕','','button_company',0,'/api/company/','GET'),(57410030810431488,NULL,'新增','el-icon-plus','button_company_new',0,'/api/company/','POST'),(57410377264136192,NULL,'修改','el-icon-edit','button_company_edit',0,'/api/company/','PUT'),(57410870115827712,NULL,'禁用','el-icon-remove-outline','button_company_disable',0,'/api/company/disable/','PUT'),(57425509700599808,NULL,'删除','el-icon-close','button_company_delete',0,'/api/company/','DELETE');
 /*!40000 ALTER TABLE `tb_button` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -59,7 +62,7 @@ CREATE TABLE `tb_button_relation` (
   UNIQUE KEY `uq_button_relation` (`ancestor`,`descendant`),
   KEY `idx_button_relation_ancestor` (`ancestor`),
   KEY `idx_button_relation_descendant` (`descendant`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,6 +71,7 @@ CREATE TABLE `tb_button_relation` (
 
 LOCK TABLES `tb_button_relation` WRITE;
 /*!40000 ALTER TABLE `tb_button_relation` DISABLE KEYS */;
+INSERT INTO `tb_button_relation` VALUES (1,57406125863075840,0,57406125863075840),(2,57410030810431488,0,57410030810431488),(3,57406125863075840,1,57410030810431488),(4,57410377264136192,0,57410377264136192),(5,57406125863075840,1,57410377264136192),(6,57410679434379264,0,57410679434379264),(7,57406125863075840,1,57410679434379264),(8,57410870115827712,0,57410870115827712),(9,57406125863075840,1,57410870115827712),(10,57421403388903424,0,57421403388903424),(11,57406125863075840,1,57421403388903424),(21,57425509700599808,0,57425509700599808),(22,57406125863075840,1,57425509700599808);
 /*!40000 ALTER TABLE `tb_button_relation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -398,7 +402,7 @@ CREATE TABLE `tb_menu` (
 
 LOCK TABLES `tb_menu` WRITE;
 /*!40000 ALTER TABLE `tb_menu` DISABLE KEYS */;
-INSERT INTO `tb_menu` VALUES (57028864446038016,'2020-06-06 16:52:20.947000','部門管理','el-icon-office-building','menu_company',0,'/company',0),(57033074608701440,'2020-06-06 17:09:04.691000','菜單列表','','menu_company_list',0,'/company/list',0),(57038146436595712,'2020-06-06 17:29:13.831000','用戶管理','el-icon-s-custom','menu_user',0,'/user',0);
+INSERT INTO `tb_menu` VALUES (57028864446038016,'2020-06-06 16:52:20.947000','部門管理','el-icon-office-building','menu_company',0,'/company',0),(57033074608701440,'2020-06-06 17:09:04.691000','部門列表','','menu_company_list',0,'/company/list',0),(57038146436595712,'2020-06-06 17:29:13.831000','用戶管理','el-icon-s-custom','menu_user',0,'/user',0),(57387567816900608,'2020-06-07 16:37:42.482000','禁用列表','','menu_company_disabled',0,'/company/disabled',2);
 /*!40000 ALTER TABLE `tb_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -418,7 +422,7 @@ CREATE TABLE `tb_menu_relation` (
   UNIQUE KEY `uq_menu_relation` (`ancestor`,`descendant`),
   KEY `idx_menu_relation_ancestor` (`ancestor`),
   KEY `idx_menu_relation_descendant` (`descendant`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -427,7 +431,7 @@ CREATE TABLE `tb_menu_relation` (
 
 LOCK TABLES `tb_menu_relation` WRITE;
 /*!40000 ALTER TABLE `tb_menu_relation` DISABLE KEYS */;
-INSERT INTO `tb_menu_relation` VALUES (1,57028864446038016,0,57028864446038016),(2,57033074608701440,0,57033074608701440),(3,57028864446038016,1,57033074608701440),(4,57038146436595712,0,57038146436595712);
+INSERT INTO `tb_menu_relation` VALUES (1,57028864446038016,0,57028864446038016),(2,57033074608701440,0,57033074608701440),(3,57028864446038016,1,57033074608701440),(4,57038146436595712,0,57038146436595712),(5,57387567816900608,0,57387567816900608),(6,57028864446038016,1,57387567816900608);
 /*!40000 ALTER TABLE `tb_menu_relation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -598,7 +602,7 @@ CREATE TABLE `tb_user` (
 
 LOCK TABLES `tb_user` WRITE;
 /*!40000 ALTER TABLE `tb_user` DISABLE KEYS */;
-INSERT INTO `tb_user` VALUES (56305110317268992,NULL,'2020-06-04 16:56:24.417000','hzlh-cmc-rd1system@mail.foxconn.com','5060+73763','','盧昌利','W0515366','','13249466549','$2a$10$WL5oQb5GOdFgwhE8lFEYSeNc1iEbisWLU1MwLxxK1wke4.gfne/d2',0,55454030171734016),(56946040233787392,NULL,'2020-06-06 11:23:14.039000','hzlh-cmc-rfid@mail.foxconn.com','5060+73763','','盧昌利2','W0515367','','13249466548','$2a$10$LaHypgbs16sWP1rZJ0X.8.E6Y99HAsmVf8f5S5El.0bEaFIQCIWLy',0,55464266177708032);
+INSERT INTO `tb_user` VALUES (56305110317268992,NULL,'2020-06-04 16:56:24.417000','hzlh-cmc-rd1system@mail.foxconn.com','5060+73763','','盧昌利','W0515366','','13249466549','$2a$10$n7oExiKKWEXe2a.V5UX9i.4ebFH4PQhiVdfNHk9SR6tDWGrZTsep2',0,55454030171734016),(56946040233787392,NULL,'2020-06-06 11:23:14.039000','hzlh-cmc-rfid@mail.foxconn.com','5060+73763','','盧昌利2','W0515367','','13249466548','$2a$10$AYskrIkEUj5YeOb2uLq41uVy3NHcEixwcRq2y9KDQlZ43qnXPGkVy',0,55464266177708032);
 /*!40000 ALTER TABLE `tb_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -627,10 +631,6 @@ LOCK TABLES `tb_user_role` WRITE;
 /*!40000 ALTER TABLE `tb_user_role` DISABLE KEYS */;
 /*!40000 ALTER TABLE `tb_user_role` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'medas_iot_rbac'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -641,4 +641,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-06 17:56:42
+-- Dump completed on 2020-06-07 21:03:54

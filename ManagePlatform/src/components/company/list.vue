@@ -290,16 +290,16 @@
 				})
 			},
 			handleDisableChange: function (val) {				
-				var msg = val.status == '0' ? '启用' : '禁用'
+				var msg = val.status === '0' ? '启用' : '禁用'
 				disableCompany(val.id, val.status).then(res => {					
-					if (res.status == 200) {
+					if (res.status === 200) {
 						this.$message({
 							message: `${msg}成功`,
 							type: 'success',
 							showClose: true
 						})
 					} else {
-						val.status = val.status == '0' ? '1' : '0'
+						val.status = val.status === '0' ? '1' : '0'
 						this.$message({
 							message: `${msg}失败`,
 							type: 'error',
