@@ -57,6 +57,11 @@ export default new Router({
                     path: '/system/resource',
                     name: '资源管理',
                     component: (resolve) => require(['@/components/system/resource'], resolve)
+                },
+                {
+                    path: '/system/authority',
+                    name: '权限管理',
+                    component: (resolve) => require(['@/components/system/authority'], resolve)
                 }
             ]
         },
