@@ -24,10 +24,32 @@
 				<el-table-column prop="details" label="詳情" sortable />
 				<el-table-column label="菜單">
 					<template slot-scope="scope">
-						<label>{{scope.row.menuList}}</label>					
+						<el-link
+							v-for="item in scope.row.menuList"
+							:key="item.id"
+							:icon="item.icon"
+							type="primary"
+							style="margin: 4px 8px;"
+						>{{item.details}}</el-link>
 					</template>
 				</el-table-column>
-				<el-table-column label="按鈕"></el-table-column>
+				<el-table-column label="按鈕">
+					<template slot-scope="scope">
+						<el-link
+							v-for="item in scope.row.buttonList"
+							:key="item.id"
+							:icon="item.icon"
+							type="primary"
+							style="margin: 4px 8px;"
+						>{{item.details}}</el-link>
+					</template>
+				</el-table-column>
+				<el-table-column label="操作" align="center" fixed="right">
+					<template slot-scope="scope">
+						<el-button size="mini" type="text" @click="editClick(scope.row)">修改</el-button>
+						<el-button size="mini" type="text" @click="deleteClick(scope.row)">刪除</el-button>
+					</template>
+				</el-table-column>
 				<el-table-column label="狀態" width="60px" align="center" fixed="right">
 					<template slot-scope="scope">
 						<el-switch
@@ -69,9 +91,10 @@
 					<el-cascader
 						v-model="authority.buttonIds"
 						:options="buttons"
-                        :key="isResouceShow"
+						:key="isResouceShow"
 						style="width: 100%"
-						:props="cascader_props"
+						:props="cascader_props2"
+						collapse-tags
 						clearable
 					></el-cascader>
 				</el-form-item>
@@ -107,7 +130,13 @@
 					value: 'id',
 					children: 'descendants',
                     checkStrictly: true,
-                    multiple: true,                    
+                    multiple: true
+				},
+				cascader_props2: {
+					label: 'name',
+					value: 'id',
+					children: 'descendants',
+					multiple: true
 				},
 				rules: {
 					name: [{ required: true, message: '請輸入ID', trigger: 'blur' }],
@@ -161,7 +190,9 @@
 									type: 'success',
 									showClose: true
                                 })
-                                this.queryAuthorities()
+								this.queryAuthorities()
+								this.clearForm()
+								this.show_dialog = false
                             } else {
                                 this.$message({
                                     message: `${this.button}失敗`,
@@ -183,7 +214,36 @@
                         this.authorities = res.data.data
                     }
                 })
-            }
-		},
+			},
+			editClick: function(val) {
+				this.clearForm()
+				this.authority = Object.assign({}, val)
+				var buttonParent = ''
+				console.log(this.authority.buttonList.length)
+				console.log(this.buttons.length)
+				for (var i = 0; i < this.buttons.length; i++) {
+					buttonParent = this.buttons[i].id
+					if (this.buttons[i].descendants !== undefined) {
+						for (var j = 0; j < this.buttons[i].descendants.length; j++) {
+							this.authority.buttonIds.append([buttonParent, this.buttons[i].descendants[j].id])
+							if (this.authority.buttonIds.length === this.authority.buttonList.length) {
+								break
+							}
+						}
+					}
+					if (this.authority.buttonIds.length === this.authority.buttonList.length) {
+						break
+					}
+				}
+				this.button = '修改'
+				this.dialog_title = `${this.button}權限`
+				this.show_dialog = true
+                this.modify = false
+                this.isResouceShow = 0
+			},
+			deleteClick: function(val) {
+
+			}
+		}
 	}
 </script>
