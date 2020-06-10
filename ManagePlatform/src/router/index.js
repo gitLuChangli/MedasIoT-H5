@@ -60,8 +60,13 @@ export default new Router({
                 },
                 {
                     path: '/system/authority',
-                    name: '权限管理',
+                    name: '權限管理',
                     component: (resolve) => require(['@/components/system/authority'], resolve)
+                },
+                {
+                    path: '/system/role',
+                    name: '角色管理',
+                    component: (resolve) => require(['@/components/system/role'], resolve)
                 }
             ]
         },

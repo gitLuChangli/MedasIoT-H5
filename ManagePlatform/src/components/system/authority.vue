@@ -20,8 +20,9 @@
 				stripe
 				size="mini"
 			>
-				<el-table-column prop="name" label="ID" width="300" sortable />
-				<el-table-column prop="details" label="詳情" sortable />
+				<el-table-column prop="name" label="ID" width="250" sortable />
+				<el-table-column prop="title" label="標題" />
+				<el-table-column prop="details" label="詳情" />
 				<el-table-column label="菜單">
 					<template slot-scope="scope">
 						<el-link
@@ -30,7 +31,7 @@
 							:icon="item.icon"
 							type="primary"
 							style="margin: 4px 8px;"
-						>{{item.details}}</el-link>
+						>{{item.title}}</el-link>
 					</template>
 				</el-table-column>
 				<el-table-column label="按鈕">
@@ -41,10 +42,10 @@
 							:icon="item.icon"
 							type="primary"
 							style="margin: 4px 8px;"
-						>{{item.details}}</el-link>
+						>{{item.title}}</el-link>
 					</template>
 				</el-table-column>
-				<el-table-column label="操作" align="center" fixed="right">
+				<el-table-column label="操作" align="center" width="150px" fixed="right">
 					<template slot-scope="scope">
 						<el-button size="mini" type="text" @click="editClick(scope.row)">修改</el-button>
 						<el-button size="mini" type="text" @click="deleteClick(scope.row)">刪除</el-button>
@@ -75,7 +76,10 @@
 				<el-form-item label="ID" prop="name">
 					<el-input v-model="authority.name" />
 				</el-form-item>
-				<el-form-item label="名稱" prop="details">
+				<el-form-item label="標題" prop="title">
+					<el-input v-model="authority.title" />
+				</el-form-item>
+				<el-form-item label="詳情">
 					<el-input v-model="authority.details" />
 				</el-form-item>
 				<el-form-item label="菜單">
@@ -94,7 +98,6 @@
 						:key="isResouceShow"
 						style="width: 100%"
 						:props="cascader_props2"
-						collapse-tags
 						clearable
 					></el-cascader>
 				</el-form-item>
@@ -107,142 +110,165 @@
 	</div>
 </template>
 <script>
-    import { queryResources, saveAuthority, queryAuthorities } from '../../api/iot.js'
+	import { queryResources, saveAuthority, queryAuthorities, disableAuthority, deleteAuthority } from '../../api/iot.js'
 	export default {
 		data() {
 			return {
 				authorities: [],
 				menus: [],
-                buttons: [],
+				buttons: [],
 				dialog_title: '',
 				show_dialog: false,
 				button: '',
 				authority: {
 					id: '',
 					name: '',
+					title: '',
 					details: '',
 					menuIds: [],
 					buttonIds: [],
 					status: 0
 				},
 				cascader_props: {
-					label: 'name',
+					label: 'title',
 					value: 'id',
 					children: 'descendants',
-                    checkStrictly: true,
-                    multiple: true
+					checkStrictly: true,
+					multiple: true
 				},
 				cascader_props2: {
-					label: 'name',
+					label: 'title',
 					value: 'id',
 					children: 'descendants',
 					multiple: true
 				},
 				rules: {
 					name: [{ required: true, message: '請輸入ID', trigger: 'blur' }],
-					details: [{ required: true, message: '請輸入名稱', trigger: 'blur' }]
-                },
-                isResouceShow: 0
+					title: [{ required: true, message: '請輸入標題', trigger: 'blur' }]
+				},
+				isResouceShow: 0
 			}
 		},
 		mounted() {
-            queryResources('menu', true).then(res => {
-                if (res.status === 200) {
-                    this.menus = res.data.data
-                }
-            })
-            queryResources('button', true).then(res => {
-                if (res.status === 200) {
-                    this.buttons = res.data.data
-                }
-            })
-            this.queryAuthorities()
+			queryResources('menu', true).then(res => {
+				if (res.status === 200) {
+					this.menus = res.data.data
+				}
+			})
+			queryResources('button', true).then(res => {
+				if (res.status === 200) {
+					this.buttons = res.data.data
+				}
+			})
+			this.queryAuthorities()
 		},
 		methods: {
-            clearForm() {
-                ++this.isResouceShow
-                this.authority.id = ''
-                this.authority.name = ''
-                this.authority.details = ''
-                this.authority.menuIds = []
-                this.authority.buttonIds = []
-                this.authority.status = ''
-            },
+			clearForm() {
+				++this.isResouceShow
+				this.authority.id = ''
+				this.authority.name = ''
+				this.authority.details = ''
+				this.authority.menuIds = []
+				this.authority.buttonIds = []
+				this.authority.status = ''
+			},
 			showNewClick: function (e) {
-                this.clearForm()
+				this.clearForm()
 				this.button = '新增'
 				this.dialog_title = `${this.button}權限`
 				this.show_dialog = true
-                this.modify = false
-                this.isResouceShow = 0
+				this.modify = false
+				this.isResouceShow = 0
 			},
 			handleDisableChange: function (val) {
-
+				var _msg = val.status === 1 ? '禁用' : '啟用'
+				disableAuthority(val.id, val.status).then(res => {
+					if (res.status === 200) {
+						this.$message({
+							message: `${_msg}成功`,
+							type: 'success',
+							showClose: true
+						})
+						this.queryAuthorities()
+					} else {
+						this.$message({
+							message: `${_msg}失敗`,
+							type: 'error',
+							showClose: true
+						})
+						val.status = val.status === 0 ? 1 : 0
+					}
+				})
 			},
 			saveClick: function (e) {
-                this.$refs['authority'].validate(valid => {
-                    if (valid) {
-                        console.log(this.authority)
-                        saveAuthority(!this.modify, this.authority).then(res => {
-                            if (res.status === 200) {
-                                this.$message({
-                                    message: `${this.button}成功`,
+				this.$refs['authority'].validate(valid => {
+					if (valid) {
+						console.log(this.authority)
+						saveAuthority(!this.modify, this.authority).then(res => {
+							if (res.status === 200) {
+								this.$message({
+									message: `${this.button}成功`,
 									type: 'success',
 									showClose: true
-                                })
+								})
 								this.queryAuthorities()
 								this.clearForm()
 								this.show_dialog = false
-                            } else {
-                                this.$message({
-                                    message: `${this.button}失敗`,
-                                    type: 'error',
-                                    showClose: true
-                                })
-                            }
-                        })
-                    }
-                })
+							} else {
+								this.$message({
+									message: `${this.button}失敗`,
+									type: 'error',
+									showClose: true
+								})
+							}
+						})
+					}
+				})
 			},
 			resetClick: function (e) {
-                this.$refs['authority'].resetFields()
+				this.$refs['authority'].resetFields()
 				this.clearForm()
-            },
-            queryAuthorities() {
-                queryAuthorities().then(res => {
-                    if (res.status === 200) {
-                        this.authorities = res.data.data
-                    }
-                })
 			},
-			editClick: function(val) {
+			queryAuthorities() {
+				queryAuthorities().then(res => {
+					if (res.status === 200) {
+						this.authorities = res.data.data
+					}
+				})
+			},
+			editClick: function (val) {
 				this.clearForm()
 				this.authority = Object.assign({}, val)
-				var buttonParent = ''
-				console.log(this.authority.buttonList.length)
-				console.log(this.buttons.length)
-				for (var i = 0; i < this.buttons.length; i++) {
-					buttonParent = this.buttons[i].id
-					if (this.buttons[i].descendants !== undefined) {
-						for (var j = 0; j < this.buttons[i].descendants.length; j++) {
-							this.authority.buttonIds.append([buttonParent, this.buttons[i].descendants[j].id])
-							if (this.authority.buttonIds.length === this.authority.buttonList.length) {
-								break
-							}
-						}
-					}
-					if (this.authority.buttonIds.length === this.authority.buttonList.length) {
-						break
-					}
-				}
 				this.button = '修改'
 				this.dialog_title = `${this.button}權限`
 				this.show_dialog = true
-                this.modify = false
-                this.isResouceShow = 0
+				this.modify = true
+				this.isResouceShow = 0
 			},
-			deleteClick: function(val) {
-
+			deleteClick: function (val) {
+				this.$confirm(`此操作將徹底刪除：<br /><strong>${val.name} / ${val.title}</strong><br />是否繼續？`, '提示', {
+					confirmButtonText: '刪除',
+					cancelButtonText: '取消',
+					type: 'warning',
+					dangerouslyUseHTMLString: true
+				}).then(() => {
+					deleteAuthority(val.id).then(res => {
+						if (res.status === 200) {
+							this.$message({
+								message: '刪除成功',
+								type: 'success',
+								showClose: true
+							})
+							this.queryAuthorities()
+						} else {
+							this.$message({
+								message: '刪除失敗',
+								type: 'error',
+								showClose: true
+							})
+						}
+					})
+				})
 			}
 		}
 	}

@@ -303,6 +303,28 @@ export async function queryAuthorities() {
     })
 }
 
+/**
+ * 启用禁用权限
+ * @param {*} authorityId 权限编号
+ * @param {*} status 1：禁用，0启用
+ */
+export async function disableAuthority(authorityId, status) {
+    return axios({
+        url: `${host}/api/permission/disable/${authorityId}/${status}`,
+        method: `put`
+    })
+}
+
+/**
+ * 删除权限
+ * @param {*} authorityId 权限编号
+ */
+export async function deleteAuthority(authorityId) {
+    return axios({
+        url: `${host}/api/permission/${authorityId}`,
+        method: `delete`
+    })
+}
 
 
 
