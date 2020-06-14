@@ -202,6 +202,10 @@
 						{
 							name: '角色管理',
 							path: '/system/role'
+						},
+						{
+							name: '部門管理',
+							path: '/system/company'
 						}]
 					},
 					{

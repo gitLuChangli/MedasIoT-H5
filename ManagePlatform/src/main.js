@@ -28,9 +28,12 @@ Vue.prototype.$echarts = echarts
 Vue.prototype.RES_URL = "http://127.0.0.1:8080"
 
 axios.interceptors.response.use(response => {
-    console.log(response)
-    return response
-})
+        console.log(response)
+        return response
+    },
+    error => {
+        return error
+    })
 
 NProgress.configure({
     easing: 'ease', // 动画方式    
@@ -48,7 +51,6 @@ router.beforeEach((to, from, next) => {
 router.afterEach(() => {
     NProgress.done()
 })
-
 
 /* eslint-disable no-new */
 new Vue({

@@ -203,7 +203,6 @@
 			saveClick: function (e) {
 				this.$refs['authority'].validate(valid => {
 					if (valid) {
-						console.log(this.authority)
 						saveAuthority(!this.modify, this.authority).then(res => {
 							if (res.status === 200) {
 								this.$message({

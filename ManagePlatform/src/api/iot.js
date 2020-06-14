@@ -3,7 +3,8 @@ import axios from 'axios'
 const host = 'http://127.0.0.1:8080'
 
 /**
- * 创建部门
+ * 创建/修改部门
+ * @param {*} modify true：修改，false：创建
  * @param {
  *  code 费用代码，不为空
  *  name 部门名称，不为空
@@ -17,34 +18,12 @@ const host = 'http://127.0.0.1:8080'
  *  ancestor 所属部门，从最高层级开始，逗号隔开
  * } company 部门信息
  */
-export async function newCompany(company) {
+export async function saveCompany(modify, company) {
+    var _method = modify ? 'put' : 'post'
     return axios({
         url: `${host}/api/company/`,
         data: company,
-        method: `post`
-    })
-}
-
-/**
- * 修改部门信息
- * @param {
- *  code 费用代码，不为空
- *  name 部门名称，不为空
- *  details 部门详情
- *  region 地区
- *  province 省
- *  city 市
- *  county 县
- *  address 地址
- *  area 园区
- *  ancestor 所属部门，从最高层级开始，逗号隔开
- * } company 部门信息
- */
-export async function editCompany(company) {
-    return axios({
-        url: `${host}/api/company/`,
-        data: company,
-        method: `put`
+        method: _method
     })
 }
 
@@ -66,7 +45,7 @@ export async function disableCompany(companyId, status) {
  */
 export async function deleteCompany(companyId) {
     return axios({
-        url: `${host}/api/company/delete/${companyId}`,
+        url: `${host}/api/company/${companyId}`,
         method: `delete`
     })
 }
@@ -74,7 +53,7 @@ export async function deleteCompany(companyId) {
 /**
  * 获取所有的部门
  */
-export async function getCompanies() {
+export async function queryCompanies() {
     return axios({
         url: `${host}/api/company/descendants`,
         method: `get`
@@ -326,7 +305,52 @@ export async function deleteAuthority(authorityId) {
     })
 }
 
+/**
+ * 新增/修改角色
+ * @param {*} modify false：新增，true：修改
+ * @param {*} role 角色信息
+ */
+export async function saveRole(modify, role) {
+    var _method = modify ? 'put' : 'post'
+    return axios({
+        url: `${host}/api/role/`,
+        method: _method,
+        data: role
+    })
+}
 
+/**
+ * 获取所有角色
+ */
+export async function queryRoles() {
+    return axios({
+        url: `${host}/api/role/`,
+        method: `get`
+    })
+}
+
+/**
+ * 刪除角色
+ * @param {*} roleId 角色编号
+ */
+export async function deleteRole(roleId) {
+    return axios({
+        url: `${host}/api/role/${roleId}`,
+        method: `delete`
+    })
+}
+
+/**
+ * 修改角色状态
+ * @param {*} roleId 角色编号
+ * @param {*} status 0：启用，1：禁用
+ */
+export async function disableRole(roleId, status) {
+    return axios({
+        url: `${host}/api/role/disable/${roleId}/${status}`,
+        method: `put`
+    })
+}
 
 
 export async function getDeviceType() {

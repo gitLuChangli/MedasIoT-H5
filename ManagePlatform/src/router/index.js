@@ -67,6 +67,11 @@ export default new Router({
                     path: '/system/role',
                     name: '角色管理',
                     component: (resolve) => require(['@/components/system/role'], resolve)
+                },
+                {
+                    path: 'system/company',
+                    name: '部門管理',
+                    component: (resolve) => require(['@/components/system/company'], resolve)
                 }
             ]
         },
