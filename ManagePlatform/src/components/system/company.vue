@@ -84,154 +84,154 @@
 	</div>
 </template>
 <script>
-import { queryCompanies, saveCompany, disableCompany, deleteCompany } from '../../api/iot.js'
-export default {
-    data() {
-        return {
-			companies: [],
-            cascader_props: {
-                label: 'name',
-                value: 'id',
-                children: 'descendants',
-                checkStrictly: true
-            },
-			dialog_title: '',
-			show_dialog: false,
-			button: '',
-            modify: false,
-			company: {
-				id: '',
-				code: '',
-				name: '',
-				details: '',
-				region: '',
-				province: '',
-				city: '',
-				county: '',
-				address: '',
-				area: '',
-				status: '',
-				ancestorIds: []
-			},
-			rules: {
-				code: [{ required: true, message: '請輸入費用代碼', trigger: 'blur' }],
-				name: [{ required: true, message: '請輸入部門名稱', trigger: 'blur' }]
-			}
-        }
-    },
-    mounted() {
-		this.queryCompanies()
-    },
-    methods: {
-		queryCompanies() {
-			queryCompanies().then(res => {
-				if (res.status === 200) {
-					this.companies = res.data.data
-					this.companies2 = res.data.data
+	import { queryCompanies, saveCompany, disableCompany, deleteCompany } from '../../api/iot.js'
+	export default {
+		data() {
+			return {
+				companies: [],
+				cascader_props: {
+					label: 'name',
+					value: 'id',
+					children: 'descendants',
+					checkStrictly: true
+				},
+				dialog_title: '',
+				show_dialog: false,
+				button: '',
+				modify: false,
+				company: {
+					id: '',
+					code: '',
+					name: '',
+					details: '',
+					region: '',
+					province: '',
+					city: '',
+					county: '',
+					address: '',
+					area: '',
+					status: '',
+					ancestorIds: []
+				},
+				rules: {
+					code: [{ required: true, message: '請輸入費用代碼', trigger: 'blur' }],
+					name: [{ required: true, message: '請輸入部門名稱', trigger: 'blur' }]
 				}
-			})
+			}
 		},
-		clearCache() {
-			this.company.id = ''
-			this.company.code = ''
-			this.company.name = ''
-			this.company.details = ''
-			this.company.region = ''
-			this.company.province = ''
-			this.company.city = ''
-			this.company.county = ''
-			this.company.address = ''
-			this.company.area = ''
-			this.company.status = ''
-			this.company.ancestorIds = []
+		mounted() {
+			this.queryCompanies()
 		},
-        showNewClick: function(e) {
-			this.button = '新增'
-			this.clearCache()
-			this.dialog_title = `${this.button}部門`
-			this.show_dialog = true
-			this.modify = false
-		},
-		editClick: function(val) {
-			this.company = Object.assign({}, val)
-			this.button = '修改'
-			this.dialog_title = `${this.button}部門`
-			this.show_dialog = true
-			this.modify = true
-			console.log(this.company)
-		},
-		deleteClick: function(val) {
-			this.$confirm(`此操作將徹底刪除：<br /><strong>${val.name}</strong><br />是否繼續？`, '提示', {
-				confirmButtonText: '刪除',
-				cancelButtonText: '取消',
-				type: 'warning',
-				dangerouslyUseHTMLString: true
-			}).then(() => {
-				deleteCompany(val.id).then(res => {
+		methods: {
+			queryCompanies() {
+				queryCompanies().then(res => {
 					if (res.status === 200) {
-						this.$message({
-							message: `刪除成功`,
-							type: 'success',
-							showClose: true
-						})
-						this.queryCompanies()
-					} else {
-						this.$message({
-							message: `刪除失敗`,
-							type: 'error',
-							showClose: true
-						})
+						this.companies = res.data.data
+						this.companies2 = res.data.data
 					}
 				})
-			})
-		},
-		saveClick: function(e) {
-			this.$refs['company'].validate(valid => {
-				if (valid) {
-					console.log(this.company)
-					saveCompany(this.modify, this.company).then(res => {
+			},
+			clearCache() {
+				this.company.id = ''
+				this.company.code = ''
+				this.company.name = ''
+				this.company.details = ''
+				this.company.region = ''
+				this.company.province = ''
+				this.company.city = ''
+				this.company.county = ''
+				this.company.address = ''
+				this.company.area = ''
+				this.company.status = ''
+				this.company.ancestorIds = []
+			},
+			showNewClick: function (e) {
+				this.button = '新增'
+				this.clearCache()
+				this.dialog_title = `${this.button}部門`
+				this.show_dialog = true
+				this.modify = false
+			},
+			editClick: function (val) {
+				this.company = Object.assign({}, val)
+				this.button = '修改'
+				this.dialog_title = `${this.button}部門`
+				this.show_dialog = true
+				this.modify = true
+				console.log(this.company)
+			},
+			deleteClick: function (val) {
+				this.$confirm(`此操作將徹底刪除：<br /><strong>${val.name}</strong><br />是否繼續？`, '提示', {
+					confirmButtonText: '刪除',
+					cancelButtonText: '取消',
+					type: 'warning',
+					dangerouslyUseHTMLString: true
+				}).then(() => {
+					deleteCompany(val.id).then(res => {
 						if (res.status === 200) {
 							this.$message({
-								message: `${this.button}成功`,
+								message: `刪除成功`,
 								type: 'success',
 								showClose: true
 							})
-							this.show_dialog = false
 							this.queryCompanies()
 						} else {
 							this.$message({
-								message: `${this.button}失敗`,
+								message: `刪除失敗`,
 								type: 'error',
 								showClose: true
 							})
 						}
 					})
-				}
-			})
-		},
-		resetClick: function(e) {
-			this.clearCache()
-			this.$refs['company'].resetFields()
-		},
-		handleDisableChange: function(val) {
-			var _msg = val.status === 1 ? '禁用' : '啟用'
-			disableCompany(val.id, val.status).then(res => {
-				if (res.status === 200) {
-					this.$message({
-						message: `${_msg}成功`,
-						type: 'success',
-						showClose: true
-					})
-				} else {
-					this.$message({
-						message: `${_msg}失敗`,
-						type: 'error',
-						showClose: false
-					})
-					val.status = val.status === 1 ? 0 : 1
-				}
-			})
+				})
+			},
+			saveClick: function (e) {
+				this.$refs['company'].validate(valid => {
+					if (valid) {
+						console.log(this.company)
+						saveCompany(this.modify, this.company).then(res => {
+							if (res.status === 200) {
+								this.$message({
+									message: `${this.button}成功`,
+									type: 'success',
+									showClose: true
+								})
+								this.show_dialog = false
+								this.queryCompanies()
+							} else {
+								this.$message({
+									message: `${this.button}失敗`,
+									type: 'error',
+									showClose: true
+								})
+							}
+						})
+					}
+				})
+			},
+			resetClick: function (e) {
+				this.clearCache()
+				this.$refs['company'].resetFields()
+			},
+			handleDisableChange: function (val) {
+				var _msg = val.status === 1 ? '禁用' : '啟用'
+				disableCompany(val.id, val.status).then(res => {
+					if (res.status === 200) {
+						this.$message({
+							message: `${_msg}成功`,
+							type: 'success',
+							showClose: true
+						})
+					} else {
+						this.$message({
+							message: `${_msg}失敗`,
+							type: 'error',
+							showClose: false
+						})
+						val.status = val.status === 1 ? 0 : 1
+					}
+				})
+			}
 		}
-    }
-}
+	}
 </script>

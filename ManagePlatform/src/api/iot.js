@@ -1,7 +1,5 @@
 import axios from 'axios'
 
-const host = 'http://127.0.0.1:8080'
-
 /**
  * 创建/修改部门
  * @param {*} modify true：修改，false：创建
@@ -21,7 +19,7 @@ const host = 'http://127.0.0.1:8080'
 export async function saveCompany(modify, company) {
     var _method = modify ? 'put' : 'post'
     return axios({
-        url: `${host}/api/company/`,
+        url: `/api/company/`,
         data: company,
         method: _method
     })
@@ -34,7 +32,7 @@ export async function saveCompany(modify, company) {
  */
 export async function disableCompany(companyId, status) {
     return axios({
-        url: `${host}/api/company/disable/${companyId}/${status}`,
+        url: `/api/company/disable/${companyId}/${status}`,
         method: `put`
     })
 }
@@ -45,7 +43,7 @@ export async function disableCompany(companyId, status) {
  */
 export async function deleteCompany(companyId) {
     return axios({
-        url: `${host}/api/company/${companyId}`,
+        url: `/api/company/${companyId}`,
         method: `delete`
     })
 }
@@ -55,7 +53,7 @@ export async function deleteCompany(companyId) {
  */
 export async function queryCompanies() {
     return axios({
-        url: `${host}/api/company/descendants`,
+        url: `/api/company/descendants`,
         method: `get`
     })
 }
@@ -66,7 +64,7 @@ export async function queryCompanies() {
  */
 export async function getCompanyById(companyId) {
     return axios({
-        url: `${host}/api/company/${companyId}`,
+        url: `/api/company/${companyId}`,
         method: `get`
     })
 }
@@ -77,7 +75,7 @@ export async function getCompanyById(companyId) {
  */
 export async function getCompanyDescendantsById(companyId) {
     return axios({
-        url: `${host}/api/company/ancestor/${companyId}`,
+        url: `/api/company/ancestor/${companyId}`,
         method: `get`
     })
 }
@@ -98,7 +96,7 @@ export async function getCompanyDescendantsById(companyId) {
  */
 export async function newUser(user) {
     return axios({
-        url: `${host}/api/user/`,
+        url: `/api/user/`,
         method: `post`,
         data: user
     })
@@ -188,7 +186,7 @@ export async function resetPwd(userid) {
  * @param {*} res 资源
  */
 export async function saveResource(modify, action, res) {
-    var _url = `${host}/api/${action}/`
+    var _url = `/api/${action}/`
     var _method = ''
     if (modify) {
         _method = `put`
@@ -208,7 +206,7 @@ export async function saveResource(modify, action, res) {
  * @param {*} all 显示所有，包含禁用
  */
 export async function queryResources(action, all) {
-    var _url = `${host}/api/${action}/descendants`
+    var _url = `/api/${action}/descendants`
     if (all) {
         _url += '?all=true'
     }
@@ -225,7 +223,7 @@ export async function queryResources(action, all) {
  * @param {*} status 状态，1：禁用，0：启用
  */
 export async function disableResource(action, resid, status) {
-    var _url = `${host}/api/${action}/disable/${resid}/${status}`
+    var _url = `/api/${action}/disable/${resid}/${status}`
     return axios({
         url: _url,
         method: `put`
@@ -238,23 +236,10 @@ export async function disableResource(action, resid, status) {
  * @param {*} resid 资源编号
  */
 export async function deleteResource(action, resid) {
-    var _url = `${host}/api/${action}/${resid}`
+    var _url = `/api/${action}/${resid}`
     return axios({
         url: _url,
         method: `delete`
-    })
-}
-
-/**
- * 查看资源父级
- * @param {*} action 资源类型
- * @param {*} descendant 资源编号
- */
-export async function queryAncestorsByDescendant(action, descendant) {
-    var _url = `${host}/api/${action}/ancestors/${descendant}`
-    return axios({
-        url: _url,
-        method: `get`
     })
 }
 
@@ -266,7 +251,7 @@ export async function queryAncestorsByDescendant(action, descendant) {
 export async function saveAuthority(isnew, authority) {
     var _method = isnew ? 'post' : 'put'
     return axios({
-        url: `${host}/api/permission/`,
+        url: `/api/permission/`,
         method: _method,
         data: authority
     })
@@ -277,7 +262,7 @@ export async function saveAuthority(isnew, authority) {
  */
 export async function queryAuthorities() {
     return axios({
-        url: `${host}/api/permission/all/`,
+        url: `/api/permission/all/`,
         method: 'get'
     })
 }
@@ -289,7 +274,7 @@ export async function queryAuthorities() {
  */
 export async function disableAuthority(authorityId, status) {
     return axios({
-        url: `${host}/api/permission/disable/${authorityId}/${status}`,
+        url: `/api/permission/disable/${authorityId}/${status}`,
         method: `put`
     })
 }
@@ -300,7 +285,7 @@ export async function disableAuthority(authorityId, status) {
  */
 export async function deleteAuthority(authorityId) {
     return axios({
-        url: `${host}/api/permission/${authorityId}`,
+        url: `/api/permission/${authorityId}`,
         method: `delete`
     })
 }
@@ -313,7 +298,7 @@ export async function deleteAuthority(authorityId) {
 export async function saveRole(modify, role) {
     var _method = modify ? 'put' : 'post'
     return axios({
-        url: `${host}/api/role/`,
+        url: `/api/role/`,
         method: _method,
         data: role
     })
@@ -324,7 +309,7 @@ export async function saveRole(modify, role) {
  */
 export async function queryRoles() {
     return axios({
-        url: `${host}/api/role/`,
+        url: `/api/role/`,
         method: `get`
     })
 }
@@ -335,7 +320,7 @@ export async function queryRoles() {
  */
 export async function deleteRole(roleId) {
     return axios({
-        url: `${host}/api/role/${roleId}`,
+        url: `/api/role/${roleId}`,
         method: `delete`
     })
 }
@@ -347,7 +332,7 @@ export async function deleteRole(roleId) {
  */
 export async function disableRole(roleId, status) {
     return axios({
-        url: `${host}/api/role/disable/${roleId}/${status}`,
+        url: `/api/role/disable/${roleId}/${status}`,
         method: `put`
     })
 }

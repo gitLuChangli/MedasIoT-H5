@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="toolbar">
-			<p class="title">资源管理</p>
+			<p class="title">資源管理</p>
 		</div>
 		<div class="toolbar">
 			<el-radio-group v-model="action" size="mini" @change="actionChange">
@@ -91,7 +91,7 @@
 				</el-form-item>
 				<el-form-item label="資源分組">
 					<el-cascader
-						v-model="resource.ancestor"
+						v-model="resource.ancestorIds"
 						:options="resources"
 						style="width: 100%"
 						:props="cascader_props"
@@ -108,7 +108,7 @@
 	</div>
 </template>
 <script>
-	import { queryResources, disableResource, saveResource, deleteResource, queryAncestorsByDescendant } from '../../api/iot.js'
+	import { queryResources, disableResource, saveResource, deleteResource } from '../../api/iot.js'
 	export default {
 		data() {
 			return {
@@ -125,7 +125,7 @@
 					index: '',
 					method: '',
 					status: '',
-					ancestor: []
+					ancestorIds: []
 				},
 				rules: {
 					name: [{ required: true, message: '請輸入ID', trigger: 'blur' }],
@@ -133,7 +133,7 @@
 				},
 				resources: [],
 				cascader_props: {
-					label: 'name',
+					label: 'title',
 					value: 'id',
 					children: 'descendants',
 					checkStrictly: true
@@ -150,8 +150,7 @@
 		methods: {
 			queryResources() {
 				queryResources(this.action, true).then(res => {
-					if (res.status === 200) {
-						this.clearForm()
+					if (res.status === 200) {						
 						this.resources = res.data.data
 					}
 				})
@@ -180,31 +179,28 @@
 				})
 			},
 			showNewClick: function (e) {
-				this.clearForm()
+				this.clearCache()
 				this.button = '新增'
 				this.dialog_title = this.button + (this.action === 'menu' ? '菜單' : '按鈕')
 				this.show_dialog = true
 				this.modify = false
 			},
 			editClick: function (val) {
-				queryAncestorsByDescendant(this.action, val.id).then(res => {
-					if (res.status === 200) {
-						this.resource = Object.assign({}, val)
-						this.resource.ancestor = res.data.data
-						this.button = '修改'
-						this.dialog_title = this.button + (this.action === 'menu' ? '菜單' : '按鈕')
-						this.show_dialog = true
-						this.modify = true
-					}
-				})
+				this.clearCache()
+				this.resource = Object.assign({}, val)
+				this.button = '修改'
+				this.dialog_title = this.button + (this.action === 'menu' ? '菜單' : '按鈕')
+				this.show_dialog = true
+				this.modify = true
 			},
 			resetClick: function (e) {
 				this.$refs['resource'].resetFields()
-				this.clearForm()
+				this.clearCache()
 			},
-			clearForm() {
+			clearCache() {
 				this.resource.id = ''
 				this.resource.name = ''
+				this.resource.title = ''
 				this.resource.details = ''
 				this.resource.url = ''
 				this.resource.icon = ''
