@@ -337,26 +337,41 @@ export async function disableRole(roleId, status) {
     })
 }
 
+/**
+ * 新增/保存设备类型
+ * @param {*} modify true：修改，false：新增
+ * @param {*} deviceType 设备类型
+ */
+export async function saveDeviceType(modify, deviceType) {
+    var _method = modify ? 'put' : 'post'
+    return axios({
+        url: `/api/device/type/`,
+        method: _method,
+        data: deviceType
+    })
+}
+
+/**
+ * 获取设备类型
+ */
+export async function queryDeviceTypes() {
+    return axios({
+        url: `/api/device/type/all`,
+        method: `get`
+    })
+}
 
 export async function getDeviceType() {
     return axios({
-        url: `${host}/api/dev/query`,
+        url: `/api/dev/query`,
         method: 'POST'
     })
 }
 
-export async function saveDeviceType(isnew, json) {
-    var act = isnew ? 'new' : 'edit'
-    return axios({
-        url: `${host}/api/dev/${act}`,
-        method: 'POST',
-        data: json
-    })
-}
 
 export async function newDeviceVersion(json) {
     return axios({
-        url: `${host}/api/dev/new/version`,
+        url: `/api/dev/new/version`,
         method: 'POST',
         data: json
     })

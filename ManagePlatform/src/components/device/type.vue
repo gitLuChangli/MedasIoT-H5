@@ -1,26 +1,26 @@
 <template>
 	<div>
 		<div class="toolbar">
-			<p class="title">设备类型</p>
+			<p class="title">設備類型</p>
 		</div>
 		<div class="toolbar">
-			<el-button size="mini" icon="el-icon-plus" @click="show_device = true">新增类型</el-button>
-			<el-button size="mini" icon="el-icon-plus" @click="show_version = true">新增版本</el-button>
+			<el-button size="mini" icon="el-icon-plus" type="primary" @click="showNewTypeClick">類型</el-button>
+			<el-button size="mini" icon="el-icon-plus" type="primary" @click="showVersionClick">版本</el-button>
 			<el-button type="danger" size="mini" @click="deleteClick" v-if="multipleSelection.length > 0">删除</el-button>
 		</div>
 
 		<div class="content">
-			<el-table :data="devices" border stripe size="mini" @selection-change="selectionChange">
+			<el-table :data="deviceTypes" border stripe size="mini" @selection-change="selectionChange">
 				<el-table-column type="selection" width="55" />
-				<el-table-column prop="no" label="设备编号" width="200" />
-				<el-table-column prop="name" label="设备名称" align="center" />
-				<el-table-column prop="description" label="说明" align="center" />
+				<el-table-column prop="model" label="設備型號" width="200" />
+				<el-table-column prop="name" label="設備名稱" align="center" />
+				<el-table-column prop="description" label="設備描述" align="center" />
 				<el-table-column type="expand" label="版本" width="130">
 					<template slot-scope="scope">
 						<el-table :data="scope.row.versions" border size="mini">
-							<el-table-column label="版本号" prop="version" align="center" />
-							<el-table-column label="硬件版本号" prop="hardVersion" align="center" />
-							<el-table-column label="图片" align="center">
+							<el-table-column label="版本號" prop="version" align="center" />
+							<el-table-column label="固件版本號" prop="hardVersion" align="center" />
+							<el-table-column label="圖片" align="center">
 								<template slot-scope="scope">
 									<img
 										:src="RES_URL + scope.row.imageUrl"
@@ -29,8 +29,8 @@
 									/>
 								</template>
 							</el-table-column>
-							<el-table-column label="说明" prop="description" align="center" />
-							<el-table-column label="创建日期" prop="createOn" align="center" />
+							<el-table-column label="説明" prop="description" align="center" />
+							<el-table-column label="創建日期" prop="createOn" align="center" />
 						</el-table>
 					</template>
 				</el-table-column>
@@ -38,69 +38,74 @@
 		</div>
 
 		<el-dialog
-			title="新增设备类型"
-			:visible.sync="show_device"
-			width="610px"
+			:title="typeTitlte"
+			:visible.sync="show_type"
+			custom-class="dialog-n"
 			center
 			:close-on-click-modal="false"
 			:destroy-on-close="true"
-			:before-close="deviceBeforeClose"
 			top="64px"
 		>
-			<el-form ref="device" :model="device" label-position="left" size="small" :rules="rules">
-				<el-form-item label="请输入设备编号" prop="no">
-					<el-input v-model="device.no" />
+			<el-form ref="deviceType" :model="deviceType" label-position="left" size="small" :rules="rules">
+				<el-form-item label="設備型號" prop="model">
+					<el-input v-model="deviceType.model" />
 				</el-form-item>
-				<el-form-item label="请输入名称" prop="name">
-					<el-input v-model="device.name" />
+				<el-form-item label="設備名稱" prop="name">
+					<el-input v-model="deviceType.name" />
 				</el-form-item>
-				<el-form-item label="说明">
-					<el-input v-model="device.description" />
+				<el-form-item label="設備描述">
+					<el-input v-model="deviceType.description" />
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="newDeviceClick">创建</el-button>
-					<el-button @click="resetClick">重置</el-button>
+					<el-button type="primary" @click="saveTypeClick">{{buttonType}}</el-button>
+					<el-button @click="resetTypeClick">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</el-dialog>
 
 		<el-dialog
-			title="创建版本"
+			:title="versionTitle"
 			:visible.sync="show_version"
-			width="610px"
+			custom-class="dialog-n"
 			center
 			:before-close="beforeClose"
 			:close-on-click-modal="false"
 			top="64px"
 		>
-			<el-form ref="version" :model="version" label-position="left" size="small" :rules="rules">
-				<el-form-item label="请选择设备类型" prop="no">
-					<el-select v-model="version.no" placeholder="请选择设备类型" style="width: 100%">
+			<el-form
+				ref="deviceVersion"
+				:model="deviceVersion"
+				label-position="left"
+				size="small"
+				:rules="rules"
+			>
+				<el-form-item label="設備類型" prop="model">
+					<el-select v-model="deviceVersion.model" placeholder="請選擇設備類型" style="width: 100%">
 						<el-option
-							v-for="item in devices"
+							v-for="item in deviceTypes"
 							:key="item.no"
 							:label="item.no + item.name"
 							:value="item.no"
 						/>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="请输入版本号" prop="version">
-					<el-input v-model="version.version" />
+				<el-form-item label="版本號" prop="version">
+					<el-input v-model="deviceVersion.version" />
 				</el-form-item>
-				<el-form-item label="请输入硬件版本号" prop="hardVersion">
-					<el-input v-model="version.hardVersion" />
+				<el-form-item label="硬件本版號" prop="hardVersion">
+					<el-input v-model="deviceVersion.hardVersion" />
 				</el-form-item>
-				<el-form-item label="说明">
+				<el-form-item label="説明">
 					<el-input
-						v-model="version.description"
+						v-model="deviceVersion.description"
 						maxlength="512"
 						type="textarea"
 						rows="3"
 						show-word-limit
 					/>
 				</el-form-item>
-				<el-form-item label="设备外观">
-					<el-input v-model="version.imageUrl" :hidden="true" />
+				<el-form-item label="設備外觀">
+					<el-input v-model="deviceVersion.imageUrl" :hidden="true" />
 				</el-form-item>
 
 				<el-upload
@@ -119,52 +124,107 @@
 					<i class="el-icon-plus"></i>
 				</el-upload>
 				<el-form-item>
-					<el-button type="primary" @click="newVersionClick">创建</el-button>
-					<el-button @click="resetClick">重置</el-button>
+					<el-button type="primary" @click="saveVersionClick">{{versionButton}}</el-button>
+					<el-button @click="resetVersionClick">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</el-dialog>
 	</div>
 </template>
 <script>
-	import { getDeviceType, saveDeviceType, newDeviceVersion, deleteDevice } from '../../api/iot.js'
+	import { queryDeviceTypes, saveDeviceType, newDeviceVersion, deleteDevice } from '../../api/iot.js'
 	export default {
 		data() {
 			return {
-				devices: [],
-				show_device: false,
+				deviceTypes: [],
+				typeTitlte: '',
+				show_type: false,
+				buttonType: '',
+				versionTitle: '',
 				show_version: false,
-				device: {
-					no: '',
+				versionButton: '',
+				deviceType: {
+					id: '',
+					model: '',
 					name: '',
-					description: ''
+					description: '',
+					status: ''
 				},
-				rules: {
-					no: [{ required: true, message: "请输入设备编号", trigger: 'blur' }],
-					name: [{ required: true, message: '请输入设备名称', trigger: 'blur' }],
-					version: [{ required: true, message: '请输入版本号', trigger: 'blur' }],
-					hardVersion: [{ required: true, message: '请输入硬件版本号', trigger: 'blur' }]
-				},
-				version: {
+				deviceVersion: {
 					no: '',
 					version: '',
 					hardVersion: '',
 					imageUrl: '',
 					description: ''
 				},
+				typeModify: false,
+				versionModify: false,
+				rules: {
+					model: [{ required: true, message: '請輸入設備型號', trigger: 'blur' }],
+					name: [{ required: true, message: '請輸入設備名稱', trigger: 'blur' }],
+					version: [{ required: true, message: '請輸入版本號', trigger: 'blur' }],
+					hardVersion: [{ required: true, message: '請輸入硬件版本號', trigger: 'blur' }]
+				},
+				
 				multipleSelection: []
 			}
 		},
 		mounted() {
-			this.getDevices()
+			this.queryDeviceTypes()
 		},
 		methods: {
-			getDevices() {
-				getDeviceType().then(res => {
-					if (res.data.code == 1) {
-						this.devices = res.data.devices
+			queryDeviceTypes() {
+				queryDeviceTypes().then(res => {
+					if (res.status === 200) {
+						this.deviceTypes = res.data.data
 					}
 				})
+			},
+			saveTypeClick: function(e) {
+				this.$refs['deviceType'].validate(valid => {
+					if (valid) {
+						saveDeviceType(this.typeModify, this.deviceType).then(res => {
+							if (res.status === 200) {
+								this.$message({
+									message: `${this.buttonType}成功`,
+									type: 'success',
+									showClose: true
+								})
+								this.show_type = false
+								this.queryDeviceTypes()
+							} else {
+								this.$message({
+									message: `${this.buttonType}失敗`,
+									type: 'error',
+									showClose: true
+								})
+							}
+						})
+					}
+				})
+			},
+			clearType() {
+				this.deviceType.id = ''
+				this.deviceType.model = ''
+				this.deviceType.name = ''
+				this.deviceType.description = ''
+				this.deviceType.status = ''
+			},
+			showNewTypeClick: function(e) {
+				this.clearType()
+				this.buttonType = '新增'
+				this.typeTitlte = `${this.buttonType}設備類型`
+				this.show_type = true
+			},
+			resetTypeClick: function(e) {
+				this.$refs['deviceType'].resetFields()
+				this.clearType()
+			},
+			saveVersionClick: function(e) {
+
+			},
+			resetVersionClick: function(e) {
+
 			},
 			resetClick: function (e) {
 				this.$refs['device'].resetFields()
@@ -194,15 +254,7 @@
 					}
 				})
 			},
-			clearDevice() {
-				this.device.no = ''
-				this.device.name = ''
-				this.device.description = ''
-			},
-			deviceBeforeClose: function(done) {
-				this.clearDevice()
-				done()
-			},
+			
 			newVersionClick: function (e) {
 				this.$refs['version'].validate((valid) => {
 					if (valid) {
