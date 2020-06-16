@@ -373,6 +373,17 @@ export async function deleteDeviceType(typeId) {
 }
 
 /**
+ * 根据设备型号查询版本号
+ * @param {*} typeId 设备型号id
+ */
+export async function queryDeviceVersions(typeId) {
+    return axios({
+        url: `/api/device/version/type/${typeId}`,
+        method: `get`
+    })
+}
+
+/**
  * 新增、修改设备版本信息
  * @param {*} modify true：修改，false：删除
  * @param {*} version 版本信息

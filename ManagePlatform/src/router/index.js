@@ -39,6 +39,10 @@ export default new Router({
                     component: (resolve) => require(['@/components/device/type'], resolve)
                 },
                 {
+                    path: '/device/version',
+                    component: (resolve) => require(['@/components/device/version'], resolve)
+                },
+                {
                     path: '/device/add',
                     name: '录入设备',
                     component: (resolve) => require(['@/components/device/add'], resolve)

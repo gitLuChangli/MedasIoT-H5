@@ -170,6 +170,10 @@
 								path: '/device/type'
 							},
 							{
+								name: '設備版本',
+								path: '/device/version'
+							},
+							{
 								name: '錄入設備',
 								path: '/device/add'
 							},
