@@ -361,39 +361,38 @@ export async function queryDeviceTypes() {
     })
 }
 
-export async function getDeviceType() {
+/**
+ * 刪除设备型号
+ * @param {*} typeId 设备型号编号
+ */
+export async function deleteDeviceType(typeId) {
     return axios({
-        url: `/api/dev/query`,
-        method: 'POST'
+        url: `/api/device/type/${typeId}`,
+        method: `delete`
     })
 }
 
-
-export async function newDeviceVersion(json) {
+/**
+ * 新增、修改设备版本信息
+ * @param {*} modify true：修改，false：删除
+ * @param {*} version 版本信息
+ */
+export async function saveDeviceVersion(modify, version) {
+    var _method = modify ? `put` : `post`
     return axios({
-        url: `/api/dev/new/version`,
-        method: 'POST',
-        data: json
+        url: `/api/device/version/`,
+        method: _method,
+        data: version
     })
 }
 
-export async function deleteDevice(ids) {
+/**
+ * 删除版本信息
+ * @param {*} versionId 版本信息编号
+ */
+export async function deleteDeviceVersion(versionId) {
     return axios({
-        url: `${host}/api/dev/delete`,
-        method: 'POST',
-        data: ids
-    })
-}
-export async function newDeviceItem(item) {
-    return axios({
-        url: `${host}/api/dev/item/new`,
-        method: 'POST',
-        data: item
-    })
-}
-export async function getDeviceItems(deviceId, page, size) {
-    return axios({
-        url: `${host}/api/dev/item/query?device=${deviceId}&page=${page}&size=${size}`,
-        method: 'POST'
+        url: `/api/device/version/${versionId}`,
+        method: `delete`
     })
 }

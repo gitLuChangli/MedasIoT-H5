@@ -14,10 +14,10 @@
 				<el-table-column type="selection" width="55" />
 				<el-table-column prop="model" label="設備型號" width="200" />
 				<el-table-column prop="name" label="設備名稱" align="center" />
-				<el-table-column prop="description" label="設備描述" align="center" />
+				<el-table-column prop="details" label="設備描述" align="center" />
 				<el-table-column type="expand" label="版本" width="130">
 					<template slot-scope="scope">
-						<el-table :data="scope.row.versions" border size="mini">
+						<el-table :data="scope.row.deviceVersions" border size="mini">
 							<el-table-column label="版本號" prop="version" align="center" />
 							<el-table-column label="固件版本號" prop="hardVersion" align="center" />
 							<el-table-column label="圖片" align="center">
@@ -32,6 +32,12 @@
 							<el-table-column label="説明" prop="description" align="center" />
 							<el-table-column label="創建日期" prop="createOn" align="center" />
 						</el-table>
+					</template>
+				</el-table-column>
+				<el-table-column label="操作" align="center" width="150px" fixed="right">
+					<template slot-scope="scope">
+						<el-button size="mini" type="text" @click="editTypeClick(scope.row)">修改</el-button>
+						<el-button size="mini" type="text" @click="deleteTypeClick(scope.row)">刪除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -54,7 +60,7 @@
 					<el-input v-model="deviceType.name" />
 				</el-form-item>
 				<el-form-item label="設備描述">
-					<el-input v-model="deviceType.description" />
+					<el-input v-model="deviceType.details" />
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="saveTypeClick">{{buttonType}}</el-button>
@@ -67,9 +73,9 @@
 			:title="versionTitle"
 			:visible.sync="show_version"
 			custom-class="dialog-n"
-			center
-			:before-close="beforeClose"
+			center			
 			:close-on-click-modal="false"
+			:destroy-on-close="true"
 			top="64px"
 		>
 			<el-form
@@ -79,13 +85,13 @@
 				size="small"
 				:rules="rules"
 			>
-				<el-form-item label="設備類型" prop="model">
-					<el-select v-model="deviceVersion.model" placeholder="請選擇設備類型" style="width: 100%">
+				<el-form-item label="設備類型">
+					<el-select v-model="deviceVersion.deviceType" placeholder="請選擇設備類型" style="width: 100%">
 						<el-option
 							v-for="item in deviceTypes"
-							:key="item.no"
-							:label="item.no + item.name"
-							:value="item.no"
+							:key="item.id"
+							:label="item.model + item.name"
+							:value="item.id"
 						/>
 					</el-select>
 				</el-form-item>
@@ -97,7 +103,7 @@
 				</el-form-item>
 				<el-form-item label="説明">
 					<el-input
-						v-model="deviceVersion.description"
+						v-model="deviceVersion.details"
 						maxlength="512"
 						type="textarea"
 						rows="3"
@@ -124,7 +130,7 @@
 					<i class="el-icon-plus"></i>
 				</el-upload>
 				<el-form-item>
-					<el-button type="primary" @click="saveVersionClick">{{versionButton}}</el-button>
+					<el-button type="primary" @click="saveVersionClick">{{buttonVersion}}</el-button>
 					<el-button @click="resetVersionClick">重置</el-button>
 				</el-form-item>
 			</el-form>
@@ -132,7 +138,7 @@
 	</div>
 </template>
 <script>
-	import { queryDeviceTypes, saveDeviceType, newDeviceVersion, deleteDevice } from '../../api/iot.js'
+	import { queryDeviceTypes, saveDeviceType, deleteDeviceType, saveDeviceVersion, deleteDeviceVersion } from '../../api/iot.js'
 	export default {
 		data() {
 			return {
@@ -142,20 +148,20 @@
 				buttonType: '',
 				versionTitle: '',
 				show_version: false,
-				versionButton: '',
+				buttonVersion: '',
 				deviceType: {
 					id: '',
 					model: '',
 					name: '',
-					description: '',
-					status: ''
+					details: ''
 				},
 				deviceVersion: {
-					no: '',
+					id: '',
+					deviceType: '',
 					version: '',
 					hardVersion: '',
 					imageUrl: '',
-					description: ''
+					details: ''
 				},
 				typeModify: false,
 				versionModify: false,
@@ -165,7 +171,7 @@
 					version: [{ required: true, message: '請輸入版本號', trigger: 'blur' }],
 					hardVersion: [{ required: true, message: '請輸入硬件版本號', trigger: 'blur' }]
 				},
-				
+
 				multipleSelection: []
 			}
 		},
@@ -180,7 +186,7 @@
 					}
 				})
 			},
-			saveTypeClick: function(e) {
+			saveTypeClick: function (e) {
 				this.$refs['deviceType'].validate(valid => {
 					if (valid) {
 						saveDeviceType(this.typeModify, this.deviceType).then(res => {
@@ -207,85 +213,94 @@
 				this.deviceType.id = ''
 				this.deviceType.model = ''
 				this.deviceType.name = ''
-				this.deviceType.description = ''
-				this.deviceType.status = ''
+				this.deviceType.details = ''
 			},
-			showNewTypeClick: function(e) {
+			showNewTypeClick: function (e) {
 				this.clearType()
 				this.buttonType = '新增'
 				this.typeTitlte = `${this.buttonType}設備類型`
 				this.show_type = true
+				this.typeModify = false
 			},
-			resetTypeClick: function(e) {
+			resetTypeClick: function (e) {
 				this.$refs['deviceType'].resetFields()
 				this.clearType()
 			},
-			saveVersionClick: function(e) {
-
+			editTypeClick: function (val) {
+				this.clearType()
+				this.deviceType = Object.assign({}, val)
+				this.buttonType = '修改'
+				this.typeTitlte = `${this.buttonType}設備類型`
+				this.show_type = true
+				this.typeModify = true
 			},
-			resetVersionClick: function(e) {
-
-			},
-			resetClick: function (e) {
-				this.$refs['device'].resetFields()
-				this.$refs['version'].resetFields()
-			},
-			newDeviceClick: function (e) {
-				this.$refs['device'].validate((valid) => {
-					if (valid) {
-						saveDeviceType(true, this.device).then(res => {
-							if (res.data.code == 1) {
-								this.$message({
-									message: '新建成功',
-									type: 'success',
-									showClose: true
-								})
-								this.getDevices()
-								this.clearDevice()
-								this.show_device = false
-							} else {
-								this.$message({
-									message: '新建失败',
-									type: 'error',
-									showClose: true
-								})
-							}
-						})
-					}
-				})
-			},
-			
-			newVersionClick: function (e) {
-				this.$refs['version'].validate((valid) => {
-					if (valid) {
-						newDeviceVersion(this.version).then(res => {
-							if (res.data.code == 1) {
-								this.$message({
-									message: '新建版本成功',
-									type: 'success',
-									showClose: true
-								})
-								this.clearVersion()
-								this.getDevices()
-								this.show_version = false
-							} else {
-								this.$message({
-									message: '新建版本失败',
-									type: 'error',
-									showClose: true
-								})
-							}
-						})
-					}
+			deleteTypeClick: function (val) {
+				this.$confirm(`如果該型號的設備沒有錄入，此操作將徹底刪除：<br /><strong>${val.model} ${val.name}</strong><br />是否繼續？`, '提示', {
+					confirmButtonText: '刪除',
+					cancelButtonText: '取消',
+					type: 'warning',
+					dangerouslyUseHTMLString: true
+				}).then(() => {
+					deleteDeviceType(val.id).then(res => {
+						if (res.status === 200) {
+							this.$message({
+								message: '刪除成功',
+								type: 'success',
+								showClose: true
+							})
+							this.queryDeviceTypes()
+						} else {
+							this.$message({
+								message: '刪除失敗',
+								type: 'error',
+								showClose: true
+							})
+						}
+					})
 				})
 			},
 			clearVersion() {
-				this.version.no = ''
-				this.version.version = ''
-				this.version.hardVersion = ''
-				this.version.description = ''
-				this.version.imageUrl = ''
+				this.deviceVersion.id = ''
+				this.deviceVersion.deviceType = ''
+				this.deviceVersion.version = ''
+				this.deviceVersion.hardVersion = ''
+				this.deviceVersion.imageUrl = ''
+				this.deviceVersion.details = ''
 			},
+			showVersionClick: function (e) {
+				this.clearVersion()
+				this.buttonVersion = '新增'
+				this.versionTitle = `${this.buttonVersion}版本`
+				this.show_version = true
+				this.versionModify = false
+			},
+			saveVersionClick: function (e) {
+				this.$refs['deviceVersion'].validate(valid => {
+					if (valid) {
+						saveDeviceVersion(this.versionModify, this.deviceVersion).then(res => {
+							if (res.status === 200) {
+								this.$message({
+									message: `${this.buttonVersion}成功`,
+									type: 'success',
+									showClose: true
+								})
+								this.show_version = false
+								this.queryDeviceTypes()
+							} else {
+								this.$message({
+									message: `${this.buttonVersion}失敗`,
+									type: 'error',
+									showClose: true
+								})
+							}
+						})
+					}
+				})
+			},
+			resetVersionClick: function (e) {
+				this.$refs['deviceVersion'].resetFields()
+				this.clearVersion()
+			},			
 			deleteClick: function (e) {
 				this.$confirm('此操作将删除设备类别及版本，删除后无法恢复，是否继续？', '提示', {
 					confirmButtonText: '删除',
@@ -296,7 +311,7 @@
 					for (var i = 0; i < this.multipleSelection.length; i++) {
 						ids.push(this.multipleSelection[i].id)
 					}
-					deleteDevice(ids).then(res=> {
+					deleteDevice(ids).then(res => {
 						if (res.data.code == 1) {
 							this.$message({
 								message: '删除成功',
@@ -315,25 +330,21 @@
 				})
 			},
 			uploadSuccess: function (res, file) {				
-				if (res.code == 1) {
-					this.version.imageUrl = res.filePath
+				if (res.code === 1) {
+					this.deviceVersion.imageUrl = res.filePath
 				}
 			},
-			uploadError: function (res, file) {				
-				this.$message.error('文件上传失败')
+			uploadError: function (res, file) {
+				this.$message.error('文件上傳失敗')
 			},
 			beforeUpload: function (file) {
 				const isLt1M = file.size / 1024 / 1024 < 1
 				if (!isLt1M) {
-					this.$message.error('上传图片大小不能超过1MB');
+					this.$message.error('上傳圖片大小不能超過1MB');
 				}
 				return isLt1M;
-			},
-			beforeClose: function (done) {
-				this.clearVersion()
-				done()
-			},
-			selectionChange: function (val) {				
+			},			
+			selectionChange: function (val) {
 				this.multipleSelection = val
 			}
 		}

@@ -25,7 +25,7 @@ Vue.prototype.$qs = qs
 Vue.prototype.$store = store
 Vue.prototype.$echarts = echarts
 
-Vue.prototype.RES_URL = 'http://127.0.0.1:8080'
+Vue.prototype.RES_URL = 'http://127.0.0.1:8081'
 
 axios.defaults.baseURL = 'http://127.0.0.1:8080'
 axios.interceptors.response.use(response => {
