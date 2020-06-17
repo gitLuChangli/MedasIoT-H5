@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="toolbar">
-			<p class="title">設備型號</p>
+			<p class="title">設備版本</p>
 		</div>
 		<div class="toolbar">
 			<el-select
