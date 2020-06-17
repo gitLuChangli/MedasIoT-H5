@@ -80,6 +80,8 @@ export async function getCompanyDescendantsById(companyId) {
     })
 }
 
+/** */
+
 /**
  * 新增用户
  * @param {
@@ -178,6 +180,8 @@ export async function resetPwd(userid) {
         method: `put`
     })
 }
+
+/** */
 
 /**
  * 新增/保存资源
@@ -405,5 +409,45 @@ export async function deleteDeviceVersion(versionId) {
     return axios({
         url: `/api/device/version/${versionId}`,
         method: `delete`
+    })
+}
+
+/**
+ * 录入设备
+ * @param {*} device 设备信息
+ */
+export async function adminAddDevices(device) {
+    return axios({
+        url: `/api/admin/device/`,
+        method: `post`,
+        data: device
+    })
+}
+
+/**
+ * 根据设备型号查询设备
+ * @param {*} model 设备型号
+ * @param {*} page 页码
+ * @param {*} size 页大小
+ */
+export async function adminQueryDeviceByModel(model, page, size) {
+    var _url = `/api/admin/device/by/model/${model}?page=${page}&size=${size}`
+    return axios({
+        url: _url,
+        method: `get`
+    })
+}
+
+/**
+ * 根据设备版本编号查询设备
+ * @param {*} versionId 设备版本编号
+ * @param {*} page 页码
+ * @param {*} size 页面大小
+ */
+export async function adminQueryDeviceByVersionId(versionId, page, size) {
+    var _url = `/api/admin/device/by/version/${versionId}?page=${page}&size=${size}`
+    return axios({
+        url: _url,
+        method: `get`
     })
 }

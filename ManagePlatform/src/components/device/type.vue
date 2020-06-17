@@ -126,7 +126,7 @@
 				this.clearType()
 				this.deviceType = Object.assign({}, val)
 				this.button = '修改'
-				this.dialog_titlte = `${this.button}設備類型`
+				this.dialog_title = `${this.button}設備類型`
 				this.show_dialog = true
 				this.modify = true
 			},

@@ -9,16 +9,6 @@ export default new Router({
             name: '首页',
             component: (resolve) => require(['@/components/admin'], resolve),
             children: [{
-                    path: '/company/',
-                    name: '部门列表',
-                    component: (resolve) => require(['@/components/company/list'], resolve)
-                },
-                {
-                    path: '/company/new',
-                    name: '新建部门',
-                    component: (resolve) => require(['@/components/company/new'], resolve)
-                },
-                {
                     path: '/user/',
                     name: '用户列表',
                     component: (resolve) => require(['@/components/user/list'], resolve)

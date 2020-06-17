@@ -3,11 +3,12 @@
 		<div class="toolbar">
 			<p class="title">設備版本</p>
 		</div>
-		<div class="toolbar">
+		<div class="toolbar" style="text-align: center">
+			設備類型：
 			<el-select
 				v-model="deviceTypeId"
 				size="small"
-				placeholder="請選擇設備類型"
+				placeholder="請選擇設備型號"
 				@change="queryDeviceVersions"
 			>
 				<el-option
@@ -56,6 +57,7 @@
 			center
 			:close-on-click-modal="false"
 			:destroy-on-close="true"
+			@closed="dialogClosed"
 			top="64px"
 		>
 			<el-form
@@ -70,7 +72,7 @@
 						v-model="deviceVersion.deviceTypeId"
 						placeholder="請選擇設備類型"
 						style="width: 100%"
-						:readonly="modify"
+						:disabled="modify"
 					>
 						<el-option
 							v-for="item in deviceTypes"
@@ -81,10 +83,10 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="版本號" prop="version">
-					<el-input v-model="deviceVersion.version" />
+					<el-input v-model="deviceVersion.version" :disabled="modify" />
 				</el-form-item>
 				<el-form-item label="硬件本版號" prop="hardVersion">
-					<el-input v-model="deviceVersion.hardVersion" />
+					<el-input v-model="deviceVersion.hardVersion" :disabled="modify" />
 				</el-form-item>
 				<el-form-item label="説明">
 					<el-input
@@ -101,6 +103,7 @@
 
 				<el-upload
 					ref="upload"
+					:fileList="images"
 					:action="this.RES_URL + '/upload'"
 					list-type="picture-card"
 					:multiple="false"
@@ -147,7 +150,8 @@
 					deviceTypeId: [{ required: true, message: '請輸入設備型號', trigger: 'change' }],
 					version: [{ required: true, message: '請輸入版本號', trigger: 'blur' }],
 					hardVersion: [{ required: true, message: '請輸入硬件版本號', trigger: 'blur' }]
-				}
+				},
+				images: []
             }
         },
         mounted() {
@@ -222,6 +226,7 @@
 				this.$message.error('文件上傳失敗')
 			},
 			beforeUpload: function (file) {
+				console.log(`before`)
 				const isLt1M = file.size / 1024 / 1024 < 1
 				if (!isLt1M) {
 					this.$message.error('上傳圖片大小不能超過1MB')
@@ -229,12 +234,15 @@
 				return isLt1M
             },
             editClick: function(val) {
-                this.clearVersion()
+				this.clearVersion()
+				this.images = []
                 this.deviceVersion = Object.assign({}, val)
                 this.button = '修改'
                 this.dialog_title = `${this.button}版本`
                 this.modify = true
-                this.show_dialog = true
+				this.show_dialog = true
+				this.images = []
+				this.images.push({name: val.imageUrl, url: this.RES_URL + val.imageUrl})
             },
             deleteClick: function(val) {
                 this.$confirm(`如果該版本的設備沒有錄入，此操作將徹底刪除：<br /><strong>${val.version}</strong><br />是否繼續？`, '提示', {
@@ -260,7 +268,10 @@
 						}
 					})
 				})
-            }
+			},
+			dialogClosed: function(e) {
+				this.images = []
+			}
         }
     }
 </script>

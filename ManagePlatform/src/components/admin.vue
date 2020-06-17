@@ -115,21 +115,6 @@
 						]
 					},
 					{
-						name: '部門管理',
-						path: '/company',
-						icon: 'el-icon-office-building',
-						items: [
-							{
-								name: '部门列表',
-								path: '/company/'
-							},
-							{
-								name: '新增部门',
-								path: '/company/new'
-							}
-						]
-					},
-					{
 						name: '用戶管理',
 						path: '/user',
 						icon: 'el-icon-s-custom',
