@@ -451,3 +451,15 @@ export async function adminQueryDeviceByVersionId(versionId, page, size) {
         method: `get`
     })
 }
+
+/**
+ * 给设备分配部门
+ * @param {*} deviceCompany 设备部门信息
+ */
+export async function adminSetDeviceCompany(deviceCompany) {
+    return axios({
+        url: `/api/admin/device/set/company/`,
+        method: `put`,
+        data: deviceCompany
+    })
+}

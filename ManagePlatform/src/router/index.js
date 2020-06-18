@@ -66,6 +66,22 @@ export default new Router({
                     path: 'system/company',
                     name: '部門管理',
                     component: (resolve) => require(['@/components/system/company'], resolve)
+                },
+                {
+                    path: '/app/list',
+                    component: (resolve) => require(['@/components/app/list'], resolve)
+                },
+                {
+                    path: '/app/version',
+                    component: (resolve) => require(['@/components/app/version'], resolve)
+                },
+                {
+                    path: '/app/task',
+                    component: (resolve) => require(['@/components/app/task'], resolve)
+                },
+                {
+                    path: '/app/records',
+                    component: (resolve) => require(['@/components/app/records'], resolve)
                 }
             ]
         },

@@ -137,7 +137,24 @@
 						name: '應用管理',
 						path: '/app',
 						icon: 'el-icon-s-promotion',
-						items: []
+						items: [
+							{
+								name: '應用列表',
+								path: '/app/list'
+							},
+							{
+								name: '應用版本',
+								path: '/app/version'
+							},
+							{
+								name: '安排升級',
+								path: '/app/task'
+							},
+							{
+								name: '升級記錄',
+								path: '/app/records'
+							}
+						]
 					},
 					{
 						name: '消息管理',

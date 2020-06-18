@@ -123,6 +123,10 @@
 				}
 			},
 			addClick: function(e) {
+				if (this.sn.trim().length === 0) {
+					this.sn = ''
+					return
+				}
 				if (this.device.sns.indexOf(this.sn) === -1) {
 					this.device.sns.push(this.sn)
 					this.sn = ''
