@@ -463,3 +463,17 @@ export async function adminSetDeviceCompany(deviceCompany) {
         data: deviceCompany
     })
 }
+
+/**
+ * 新增/修改应用
+ * @param {*} modify true：修改，false：新增
+ * @param {*} app 应用信息
+ */
+export async function saveApp(modify, app) {
+    var _method = modify ? `put` : `post`
+    return axios({
+        url: `/api/app/`,
+        method: _method,
+        data: app
+    })
+}
