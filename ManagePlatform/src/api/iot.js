@@ -465,6 +465,23 @@ export async function adminSetDeviceCompany(deviceCompany) {
 }
 
 /**
+ * 查询所有应用
+ */
+export async function queryApps() {
+    return axios({
+        url: `/api/app/all`,
+        method: `get`
+    })
+}
+
+export async function queryMasterApps() {
+    return axios({
+        url: `/api/app/master`,
+        method: `get`
+    })
+}
+
+/**
  * 新增/修改应用
  * @param {*} modify true：修改，false：新增
  * @param {*} app 应用信息
@@ -475,5 +492,55 @@ export async function saveApp(modify, app) {
         url: `/api/app/`,
         method: _method,
         data: app
+    })
+}
+
+/**
+ * 启用、禁用应用
+ * @param {*} appid 应用编号
+ * @param {*} status 1：禁用，0：启用
+ */
+export async function disableApp(appid, status) {
+    var _url = `/api/app/disable/${appid}/${status}`
+    return axios({
+        url: _url,
+        method: `put`
+    })
+}
+
+/**
+ * 删除应用
+ * @param {*} appid 应用编号
+ */
+export async function deleteApp(appid) {
+    var _url = `/api/app/delete/${appid}`
+    return axios({
+        url: _url,
+        method: `delete`
+    })
+}
+
+/**
+ * 获取应用参数项
+ * @param {*} appid 应用编号
+ */
+export async function getAppParameters(appid) {
+    var _url = `/api/app/parameters/${appid}`
+    return axios({
+        url: _url,
+        method: `get`
+    })
+}
+
+/**
+ * 设置应用参数
+ * @param {*} appid 应用编号
+ * @param {*} parameters 应用参数
+ */
+export async function setAppParameters(appid, parameters) {
+    return axios({
+        url: `/api/app/parameters/${appid}`,
+        method: `put`,
+        data: parameters
     })
 }
