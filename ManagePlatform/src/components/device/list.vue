@@ -10,6 +10,7 @@
 				size="small"
 				placeholder="請選擇設備類型"
 				@change="typeChange(deviceType)"
+				style="width: 300px"
 			>
 				<el-option
 					v-for="item in deviceTypes"
@@ -24,6 +25,7 @@
 				size="small"
 				placeholder="請選擇設備版本"
 				@change="versionChange(deviceVersionId)"
+				style="width: 300px"
 			>
 				<el-option
 					v-for="item in deviceVersions"
@@ -35,11 +37,12 @@
 		</div>
 		<div class="content">
 			<el-table :data="devices" border stripe size="mini">
+				<el-table-column prop="sn" label="設備編號" width="200" />
 				<el-table-column prop="model" label="設備型號" width="150" />
-				<el-table-column prop="name" label="設備名稱" width="200" />
-				<el-table-column prop="sn" label="設備編號" align="center" />
-				<el-table-column prop="firm_ver" label="固件版本" align="center" />
-				<el-table-column prop="soft_ver" label="軟件版本" align="center" />
+				<el-table-column prop="name" label="設備名稱" />
+				<el-table-column prop="details" label="設備詳情" />
+				<el-table-column prop="firm_ver" label="固件版本" width="200" align="center" />
+				<el-table-column prop="soft_ver" label="軟件版本" width="200" align="center" />
 				<el-table-column label="操作" align="center" width="150px" fixed="right">
 					<template slot-scope="scope">
 						<el-button size="mini" type="text" @click="setAppClick(scope.row)">應用</el-button>
@@ -86,10 +89,30 @@
 				</el-form-item>
 			</el-form>
 		</el-dialog>
+		<el-dialog
+			:title="dialog_title_app"
+			:visible.sync="show_dialog_app"
+			custom-class="dialog-n"
+			center
+			:close-on-click-modal="false"
+			:destroy-on-close="true"
+			top="64px"
+		>
+			<el-form ref="deviceApp" :model="deviceApp" size="small" label-position="left" :rules="rules">
+				<el-form-item>
+					<el-select v-model="deviceApp.applicationId" size="small" placeholder="請選擇應用" style="width: 100%" prop="applicationId">
+						<el-option v-for="item in apps" :key="item.id" :label="item.name" :value="item.id" />
+					</el-select>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="saveAppClick">設置</el-button>
+				</el-form-item>
+			</el-form>
+		</el-dialog>
 	</div>
 </template>
 <script>
-	import { queryDeviceTypes, queryDeviceVersions, adminQueryDeviceByModel, adminQueryDeviceByVersionId, queryCompanies, adminSetDeviceCompany } from '../../api/iot.js'
+	import { queryDeviceTypes, queryDeviceVersions, adminQueryDeviceByModel, adminQueryDeviceByVersionId, queryCompanies, adminSetDeviceCompany, queryApps, deviceSetApplication } from '../../api/iot.js'
 	export default {
 		data() {
 			return {
@@ -114,6 +137,16 @@
 					value: 'id',
 					children: 'descendants'
 				},
+				dialog_title_app: '',
+				show_dialog_app: false,
+				deviceApp: {
+					deviceId: '',
+					applicationId: ''
+				},
+				apps: [],
+				rules: [
+					{applicationId: [{ required: true, message: '請選擇設備應用', trigger: 'change' }]}
+				]
 			}
 		},
 		mounted() {
@@ -121,6 +154,11 @@
 			queryCompanies().then(res => {
 				if (res.status === 200) {
 					this.companies = res.data.data
+				}
+			})
+			queryApps().then(res => {
+				if (res.status === 200) {
+					this.apps = res.data.data
 				}
 			})
 		},
@@ -177,13 +215,16 @@
 				this.queryByType()
 			},
 			versionChange: function (val) {
-				this.queryByVersion()	
+				this.queryByVersion()
 			},
 			handleDisableChange: function (val) {
 
 			},
 			setAppClick: function (val) {
-
+				this.deviceApp.deviceId = val.id
+				this.deviceApp.applicationId = val.applicationId
+				this.dialog_title_app = `設置應用：${val.sn}`
+				this.show_dialog_app = true
 			},
 			setCompanyClick: function (val) {
 				this.deviceCompany.deviceId = val.id
@@ -207,7 +248,29 @@
 							this.queryByVersion()
 						} else if (this.deviceType !== '' && this.deviceVersionId === '') {
 							this.queryByType()
-						}						
+						}
+					}
+				})
+			},
+			saveAppClick: function(e) {
+				this.$refs['deviceApp'].validate(valid => {
+					if (valid) {
+						deviceSetApplication(this.deviceApp.deviceId, this.deviceApp.applicationId).then(res => {
+							if (res.status === 200) {
+								this.$message({
+									message: `設置成功`,
+									type: 'success',
+									showClose: true
+								})
+								this.show_dialog_app = false
+							} else {
+								this.$message({
+									message: `設置失敗`,
+									type: 'error',
+									showClose: true
+								})
+							}
+						})
 					}
 				})
 			}

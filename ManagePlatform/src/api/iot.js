@@ -544,3 +544,40 @@ export async function setAppParameters(appid, parameters) {
         data: parameters
     })
 }
+
+/**
+ * 新增、修改版本
+ * @param {*} modify true：修改，false：新增
+ * @param {*} version 版本信息
+ */
+export async function saveAppVersion(modify, version) {
+    var _method = modify ? 'put' : 'post'
+    return axios({
+        url: `/api/app/version/`,
+        method: _method,
+        data: version
+    })
+}
+
+/**
+ * 获取应用的版本信息
+ * @param {*} appid 应用编号
+ */
+export async function queryAppVersions(appid) {
+    return axios({
+        url: `/api/app/version/app/${appid}`,
+        method: 'get'
+    })
+}
+
+/**
+ * 给设备设置应用
+ * @param {*} devid 设备编号
+ * @param {*} appid 应用编号
+ */
+export async function deviceSetApplication(devid, appid) {
+    return axios({
+        url: `/api/admin/device/set/app/${devid}/${appid}`,
+        method: `put`
+    })
+}

@@ -10,6 +10,7 @@
 				size="small"
 				placeholder="請選擇設備型號"
 				@change="queryDeviceVersions"
+				style="width: 300px"
 			>
 				<el-option
 					v-for="item in deviceTypes"
@@ -217,7 +218,7 @@
                 this.$refs['deviceVersion'].resetFeilds()
                 this.clearVersion()
             },
-            uploadSuccess: function (res, file) {				
+            uploadSuccess: function (res, file) {
 				if (res.code === 1) {
 					this.deviceVersion.imageUrl = res.filePath
 				}
@@ -226,7 +227,6 @@
 				this.$message.error('文件上傳失敗')
 			},
 			beforeUpload: function (file) {
-				console.log(`before`)
 				const isLt1M = file.size / 1024 / 1024 < 1
 				if (!isLt1M) {
 					this.$message.error('上傳圖片大小不能超過1MB')

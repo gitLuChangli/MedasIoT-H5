@@ -24,6 +24,7 @@
 					<template slot-scope="scope">
 						<el-button size="mini" type="text" @click="paramClick(scope.row)">參數</el-button>
 						<el-button size="mini" type="text" @click="editClick(scope.row)">修改</el-button>
+						<el-button size="mini" type="text" @click="deleteClick(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 				<el-table-column label="狀態" width="60px" align="center" fixed="right">
@@ -99,7 +100,7 @@
 				<el-form-item style="text-align: center">
 					<el-button type="primary" circle class="el-icon-plus" @click="addParameterItemClick" />
 				</el-form-item>
-				<el-form-item>
+				<el-form-item style="text-align: center">
 					<el-button type="primary" @click="saveParamClick">保存</el-button>					
 				</el-form-item>
 			</el-form>
@@ -127,7 +128,7 @@
 				appParam: {
 					id: '',
 					params: []
-				},	
+				},
 				apps: [],
 				masterApps: [],
 				rules: {
@@ -181,6 +182,9 @@
 									showClose: true
 								})
 								this.show_dialog = false
+								if (!this.modify) {
+									this.queryMasterApps()
+								}
 								this.queryApps()
 							} else {
 								this.$message({
@@ -220,13 +224,12 @@
 							type: `error`,
 							showClose: true
 						})
-
 					}
 				})
 			},
 			clearParam() {
 				this.appParam.id = ''
-				this.appParam.prarms = []				
+				this.appParam.prarms = []
 			},
 			paramClick: function(val) {
 				getAppParameters(val.id).then(res => {
@@ -246,7 +249,7 @@
 							type: 'success',
 							showClose: true
 						})
-						this.show_dialog_param = false						
+						this.show_dialog_param = false
 					} else {
 						this.$message({
 							message: `設置失敗`,
@@ -262,6 +265,32 @@
 				this.app = Object.assign({}, val)
 				this.modify = true
 				this.show_dialog = true
+			},
+			deleteClick: function(val) {
+				this.$confirm(`此操作將徹底刪除：<br /><strong>${val.name} / ${val.details}</strong><br />是否繼續？`, '提示', {
+					confirmButtonText: '刪除',
+					cancelButtonText: '取消',
+					type: 'warning',
+					dangerouslyUseHTMLString: true
+				}).then(() => {
+					deleteApp(val.id).then(res => {
+						if (res.status === 200) {
+							this.$message({
+								message: '刪除成功',
+								type: 'success',
+								showClose: true
+							})
+							this.queryApps()
+							this.queryMasterApps()
+						} else {
+							this.$message({
+								message: '刪除失敗',
+								type: 'error',
+								showClose: true
+							})
+						}
+					})
+				})
 			}
 		}
 	}
