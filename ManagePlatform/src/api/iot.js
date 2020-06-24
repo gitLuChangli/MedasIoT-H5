@@ -513,7 +513,7 @@ export async function disableApp(appid, status) {
  * @param {*} appid 应用编号
  */
 export async function deleteApp(appid) {
-    var _url = `/api/app/delete/${appid}`
+    var _url = `/api/app/${appid}`
     return axios({
         url: _url,
         method: `delete`
@@ -579,5 +579,18 @@ export async function deviceSetApplication(devid, appid) {
     return axios({
         url: `/api/admin/device/set/app/${devid}/${appid}`,
         method: `put`
+    })
+}
+
+/**
+ * 给设备设置参数
+ * @param {*} devid 
+ * @param {*} parameter 
+ */
+export async function deviceSetParameter(devid, parameter) {
+    return axios({
+        url: `/api/device/set/parameter/${devid}`,
+        method: `put`,
+        data: parameter
     })
 }

@@ -77,7 +77,7 @@
 			:visible.sync="show_dialog_param"
 			custom-class="dialog-w"
 			center
-			top="0px"
+			top="16px"
 			@close="clearParam"
 			:destroy-on-close="true"
 			:close-on-click-modal="false"
@@ -91,9 +91,10 @@
 					<label>説明：</label>
 					<el-input v-model="item.details" style="width: 300px;" />
 					<el-button
-						type="primary"
+						type="danger"
 						circle
 						class="el-icon-minus"
+						size="mini"
 						@click="minusParameterItemClick(index)"
 					/>
 				</el-form-item>

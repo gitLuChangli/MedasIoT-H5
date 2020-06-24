@@ -19,21 +19,6 @@
 					:value="item.model"
 				/>
 			</el-select>
-			<label>設備版本：</label>
-			<el-select
-				v-model="deviceVersionId"
-				size="small"
-				placeholder="請選擇設備版本"
-				@change="versionChange(deviceVersionId)"
-				style="width: 300px"
-			>
-				<el-option
-					v-for="item in deviceVersions"
-					:key="item.id"
-					:label="item.version"
-					:value="item.id"
-				/>
-			</el-select>
 		</div>
 		<div class="content">
 			<el-table :data="devices" border stripe size="mini">
@@ -41,8 +26,9 @@
 				<el-table-column prop="model" label="設備型號" width="150" />
 				<el-table-column prop="name" label="設備名稱" />
 				<el-table-column prop="details" label="設備詳情" />
-				<el-table-column prop="firm_ver" label="固件版本" width="200" align="center" />
-				<el-table-column prop="soft_ver" label="軟件版本" width="200" align="center" />
+				<el-table-column prop="version" label="產品版本" width="100" align="center" />
+				<el-table-column prop="firm_ver" label="固件版本" width="100" align="center" />
+				<el-table-column prop="soft_ver" label="軟件版本" width="100" align="center" />
 				<el-table-column label="操作" align="center" width="150px" fixed="right">
 					<template slot-scope="scope">
 						<el-button size="mini" type="text" @click="setAppClick(scope.row)">應用</el-button>
@@ -70,7 +56,6 @@
 			center
 			:close-on-click-modal="false"
 			:destroy-on-close="true"
-			top="64px"
 		>
 			<el-form ref="deviceCompany" :model="deviceCompany" size="small" label-position="left">
 				<el-form-item>
@@ -89,6 +74,7 @@
 				</el-form-item>
 			</el-form>
 		</el-dialog>
+
 		<el-dialog
 			:title="dialog_title_app"
 			:visible.sync="show_dialog_app"
@@ -96,31 +82,57 @@
 			center
 			:close-on-click-modal="false"
 			:destroy-on-close="true"
-			top="64px"
 		>
 			<el-form ref="deviceApp" :model="deviceApp" size="small" label-position="left" :rules="rules">
 				<el-form-item>
-					<el-select v-model="deviceApp.applicationId" size="small" placeholder="請選擇應用" style="width: 100%" prop="applicationId">
+					<el-select
+						v-model="deviceApp.applicationId"
+						size="small"
+						placeholder="請選擇應用"
+						style="width: 100%"
+						prop="applicationId"
+					>
 						<el-option v-for="item in apps" :key="item.id" :label="item.name" :value="item.id" />
 					</el-select>
 				</el-form-item>
-				<el-form-item>
+				<el-form-item style="text-align: center">
 					<el-button type="primary" @click="saveAppClick">設置</el-button>
+				</el-form-item>
+			</el-form>
+		</el-dialog>
+
+		<el-dialog
+			title="設備參數"
+			:visible.sync="show_dialog_param"
+			custom-class="dialog-n"
+			center
+			:destroy-on-close="true"
+			:close-on-click-modal="false"
+			top="16px"
+		>
+			<el-form ref="devParams" :model="devParams" label-position="left" size="small">
+				<el-form-item
+					v-for="(item, index) in devParams.params"
+					:key="index"
+					:label="item.title + '：' +  item.details"
+				>
+					<el-input v-model="item.value" @change="change" />
+				</el-form-item>
+				<el-form-item style="text-align: center">
+					<el-button type="primary" @click="saveParamClick">保存</el-button>
 				</el-form-item>
 			</el-form>
 		</el-dialog>
 	</div>
 </template>
 <script>
-	import { queryDeviceTypes, queryDeviceVersions, adminQueryDeviceByModel, adminQueryDeviceByVersionId, queryCompanies, adminSetDeviceCompany, queryApps, deviceSetApplication } from '../../api/iot.js'
+	import { queryDeviceTypes, adminQueryDeviceByModel, adminQueryDeviceByVersionId, queryCompanies, adminSetDeviceCompany, queryApps, deviceSetApplication, getAppParameters, deviceSetParameter } from '../../api/iot.js'
 	export default {
 		data() {
 			return {
 				deviceType: '',
 				deviceVersion: {},
-				deviceVersionId: '',
 				deviceTypes: [],
-				deviceVersions: [],
 				devices: [],
 				page_size: 10,
 				current_page: 1,
@@ -144,9 +156,13 @@
 					applicationId: ''
 				},
 				apps: [],
-				rules: [
-					{applicationId: [{ required: true, message: '請選擇設備應用', trigger: 'change' }]}
-				]
+				rules: {
+					applicationId: [{ required: true, message: '請選擇設備應用', trigger: 'change' }]
+				},
+				show_dialog_param: false,
+				devParams: {
+					params: []
+				},
 			}
 		},
 		mounted() {
@@ -185,37 +201,8 @@
 					}
 				})
 			},
-			queryByVersion() {
-				adminQueryDeviceByVersionId(this.deviceVersionId).then(res => {
-					if (res.status === 200) {
-						this.devices = res.data.data.content
-						this.total = res.data.data.totalElements
-					} else {
-						this.$message({
-							message: `查詢失敗`,
-							type: 'error',
-							showClose: true
-						})
-					}
-				})
-			},
 			typeChange: function (val) {
-				this.deviceVersions = []
-				this.deviceVersionId = ''
-				for (var i = 0; i < this.deviceTypes.length; i++) {
-					if (this.deviceTypes[i].model === val) {
-						queryDeviceVersions(this.deviceTypes[i].id).then(res => {
-							if (res.status === 200) {
-								this.deviceVersions = res.data.data
-							}
-						})
-						break
-					}
-				}
 				this.queryByType()
-			},
-			versionChange: function (val) {
-				this.queryByVersion()
 			},
 			handleDisableChange: function (val) {
 
@@ -233,7 +220,38 @@
 				this.show_dialog_company = true
 			},
 			setParameterClick: function (val) {
-
+				if (val.applicationId === '' || val.applicationId === undefined) {
+					this.$message({
+						message: `該設備還未設置應用`,
+						type: `error`,
+						showClose: true
+					})
+					return
+				}
+				getAppParameters(val.applicationId).then(res => {
+					if (res.status === 200) {
+						console.log(val.parameter)
+						var obj = res.data.data
+						if (val.parameter !== '' && val.parameter !== null) {
+							var j = JSON.parse(val.parameter)
+							var n
+							var obj = res.data.data
+							console.log(`parameter`)
+							for (var i = 0; i < obj.length; i++) {
+								n = obj[i].name
+								console.log(n)
+								console.log(j[n])
+								if (j[n] !== undefined) {
+									obj[i].value = j[n]
+								}
+							}
+							console.log(obj)
+						}
+						this.devParams.id = val.id
+						this.devParams.params = obj
+						this.show_dialog_param = true
+					}
+				})
 			},
 			saveCompanyClick: function (e) {
 				adminSetDeviceCompany(this.deviceCompany).then(res => {
@@ -244,15 +262,11 @@
 							showClose: true
 						})
 						this.show_dialog_company = false
-						if (this.deviceType === '' && this.deviceVersionId !== '') {
-							this.queryByVersion()
-						} else if (this.deviceType !== '' && this.deviceVersionId === '') {
-							this.queryByType()
-						}
+						this.queryByType()
 					}
 				})
 			},
-			saveAppClick: function(e) {
+			saveAppClick: function (e) {
 				this.$refs['deviceApp'].validate(valid => {
 					if (valid) {
 						deviceSetApplication(this.deviceApp.deviceId, this.deviceApp.applicationId).then(res => {
@@ -263,6 +277,7 @@
 									showClose: true
 								})
 								this.show_dialog_app = false
+								this.queryByType()
 							} else {
 								this.$message({
 									message: `設置失敗`,
@@ -273,6 +288,35 @@
 						})
 					}
 				})
+			},
+			saveParamClick: function (e) {
+				console.log(this.devParams.params)
+				return
+				var obj = {}
+				for (var i = 0; i < this.devParams.params.length; i++) {
+					obj[this.devParams.params[i].name] = this.devParams.params[i].value
+				}
+				deviceSetParameter(this.devParams.id, obj).then(res => {
+					if (res.status === 200) {
+						this.$message({
+							message: `設置成功`,
+							type: 'success',
+							showClose: true
+						})
+						this.queryByType()
+						this.show_dialog_param = false
+					} else {
+						this.$message({
+							message: `設置失敗`,
+							type: 'error',
+							showClose: true
+						})
+					}
+				})
+			},
+			change: function(e) { 
+				console.log(`change`)
+				this.$forceUpdate()
 			}
 		}
 	}
