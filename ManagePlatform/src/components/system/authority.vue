@@ -184,18 +184,10 @@
 				var _msg = val.status === 1 ? '禁用' : '啟用'
 				disableAuthority(val.id, val.status).then(res => {
 					if (res.status === 200) {
-						this.$message({
-							message: `${_msg}成功`,
-							type: 'success',
-							showClose: true
-						})
+						this.showSuccess(`${_msg}成功`)
 						this.queryAuthorities()
 					} else {
-						this.$message({
-							message: `${_msg}失敗`,
-							type: 'error',
-							showClose: true
-						})
+						this.showError(`${_msg}失敗`)
 						val.status = val.status === 0 ? 1 : 0
 					}
 				})
@@ -205,20 +197,12 @@
 					if (valid) {
 						saveAuthority(!this.modify, this.authority).then(res => {
 							if (res.status === 200) {
-								this.$message({
-									message: `${this.button}成功`,
-									type: 'success',
-									showClose: true
-								})
+								this.showSuccess(`${this.button}成功`)
 								this.queryAuthorities()
 								this.clearForm()
 								this.show_dialog = false
 							} else {
-								this.$message({
-									message: `${this.button}失敗`,
-									type: 'error',
-									showClose: true
-								})
+								this.showError(`${this.button}失敗`)
 							}
 						})
 					}
@@ -253,18 +237,10 @@
 				}).then(() => {
 					deleteAuthority(val.id).then(res => {
 						if (res.status === 200) {
-							this.$message({
-								message: '刪除成功',
-								type: 'success',
-								showClose: true
-							})
+							this.showSuccess(`刪除成功`)
 							this.queryAuthorities()
 						} else {
-							this.$message({
-								message: '刪除失敗',
-								type: 'error',
-								showClose: true
-							})
+							this.showError(`刪除失敗`)
 						}
 					})
 				})

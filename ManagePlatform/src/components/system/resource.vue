@@ -129,7 +129,7 @@
 				},
 				rules: {
 					name: [{ required: true, message: '請輸入ID', trigger: 'blur' }],
-					title: [{ required: true, message: '請輸入標題', trigger: 'blur' }],
+					title: [{ required: true, message: '請輸入標題', trigger: 'blur' }]
 				},
 				resources: [],
 				cascader_props: {
@@ -162,19 +162,11 @@
 				var msg = val.status === 0 ? '啟用' : '禁用'
 				disableResource(this.action, val.id, val.status).then(res => {
 					if (res.status === 200) {
-						this.$message({
-							message: `${msg}成功`,
-							type: 'success',
-							showClose: true
-						})
+						this.showSuccess(`${msg}成功`)
 						this.queryResources()
 					} else {
 						val.status = val.status === 0 ? 1 : 0
-						this.$message({
-							message: `${msg}成功`,
-							type: 'error',
-							showClose: true
-						})
+						this.showError(`${msg}成功`)
 					}
 				})
 			},
@@ -214,20 +206,12 @@
 					if (valid) {
 						saveResource(this.modify, this.action, this.resource).then(res => {
 							if (res.status === 200) {
-								this.$message({
-									message: `${this.button}成功`,
-									type: 'success',
-									showClose: true
-								})
+								this.showSuccess(`${this.button}成功`)
 								this.resetClick(e)
 								this.queryResources()
 								this.show_dialog = false
 							} else {
-								this.$message({
-									message: `${this.button}失敗`,
-									type: 'error',
-									showClose: true
-								})
+								this.showError(`${this.button}失敗`)
 							}
 						})
 					}
@@ -242,18 +226,10 @@
 				}).then(() => {
 					deleteResource(this.action, val.id).then(res => {
 						if (res.status === 200) {
-							this.$message({
-								message: '刪除成功',
-								type: 'success',
-								showClose: true
-							})
+							this.showSuccess(`刪除成功`)
 							this.queryResources()
 						} else {
-							this.$message({
-								message: '刪除失敗',
-								type: 'error',
-								showClose: true
-							})
+							this.showError(`刪除失敗`)
 						}
 					})
 				})

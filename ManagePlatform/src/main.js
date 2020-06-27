@@ -53,6 +53,22 @@ router.afterEach(() => {
     NProgress.done()
 })
 
+Vue.prototype.showError = function(msg) {
+    this.$message({
+        message: msg,
+        type: 'error',
+        showClose: true
+    })
+}
+
+Vue.prototype.showSuccess = function(msg) {
+    this.$message({
+        message: msg,
+        type: 'success',
+        showClose: true
+    })
+}
+
 /* eslint-disable no-new */
 new Vue({
     el: '#app',

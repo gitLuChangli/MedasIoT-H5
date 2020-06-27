@@ -36,10 +36,21 @@
 						@selection-change="handleSelectionChange"
 					>
 						<el-table-column type="selection" width="55" />
-						<el-table-column prop="sn" label="設備編號" width="150" />
+						<el-table-column prop="sn" label="設備編號" width="250" />
 						<el-table-column prop="model" label="設備型號" width="150" />
 						<el-table-column prop="name" label="設備名稱" width="200" />
 					</el-table>
+					<el-pagination
+						style="margin-top: 16px"
+						@size-change="queryByApplication"
+						@current-change="queryByApplication"
+						:current-page.sync="current_page"
+						:page-sizes="[10, 20, 30, 50]"
+						:page-size="page_size"
+						layout="total, prev, pager, next"
+						:hide-on-single-page="false"
+						:total="total"
+					/>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="taskClick">安排升級</el-button>
@@ -49,7 +60,7 @@
 	</div>
 </template>
 <script>
-import { queryMasterApps, queryAppVersions } from '../../api/iot.js'
+import { queryMasterApps, queryAppVersions, adminQueryDeviceByApplication, createUpdateTask } from '../../api/iot.js'
 export default {
     data() {
         return {
@@ -59,7 +70,11 @@ export default {
             task: {
                 versionId: '',
                 sns: []
-            }
+			},
+			devices: [],
+			current_page: 1,
+			page_size: 10,
+			total: 0
         }
     },
     mounted() {
@@ -71,19 +86,45 @@ export default {
     },
     methods: {
         appChange: function(val) {
+			console.log(this.appid)
             this.task.versionId = ''
             queryAppVersions(val).then(res => {
                 if (res.status === 200) {
                     this.versions = res.data.data
                 }
-            })
+			})
+			this.queryByApplication()
         },
-        handleSelectionChange: function(e) {
-
+        handleSelectionChange: function(val) {
+			this.task.sns = []
+			for (var i = 0; i < val.length; i++) {
+				this.task.sns.push(val[i].sn)
+			}
+			console.log(this.task.sns)
         },
         taskClick: function(e) {
-
-        }
+			this.$refs['task'].validate(valid => {
+				if (valid) {
+					createUpdateTask(this.task).then(res => {
+						if (res.status === 200) {
+							this.showSuccess(`安排成功`)
+							this.task.sns = []
+							this.$refs.multipleTable.clearSelection()
+						} else {
+							this.showError(`安排失敗`)
+						}
+					})
+				}
+			})
+		},
+		queryByApplication() {
+			adminQueryDeviceByApplication(this.appid, this.current_page - 1, this.page_size).then(res => {
+				if (res.status === 200) {
+					this.devices = res.data.data.content
+					this.total = res.data.data.totalElements
+				}
+			})
+		}
     }
 }
 </script>

@@ -87,19 +87,11 @@
 					if (valid) {
 						saveDeviceType(this.modify, this.deviceType).then(res => {
 							if (res.status === 200) {
-								this.$message({
-									message: `${this.button}成功`,
-									type: 'success',
-									showClose: true
-								})
+								this.showSuccess(`${this.button}成功`)
 								this.show_dialog = false
 								this.queryDeviceTypes()
 							} else {
-								this.$message({
-									message: `${this.button}失敗`,
-									type: 'error',
-									showClose: true
-								})
+								this.showError(`${this.button}失敗`)
 							}
 						})
 					}
@@ -139,18 +131,10 @@
 				}).then(() => {
 					deleteDeviceType(val.id).then(res => {
 						if (res.status === 200) {
-							this.$message({
-								message: '刪除成功',
-								type: 'success',
-								showClose: true
-							})
+							this.showSuccess(`刪除成功`)
 							this.queryDeviceTypes()
 						} else {
-							this.$message({
-								message: '刪除失敗',
-								type: 'error',
-								showClose: true
-							})
+							this.showError(`刪除失敗`)
 						}
 					})
 				})

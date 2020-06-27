@@ -177,22 +177,14 @@
 					if (valid) {
 						saveApp(this.modify, this.app).then(res => {
 							if (res.status === 200) {
-								this.$message({
-									message: `${this.button}成功`,
-									type: 'success',
-									showClose: true
-								})
+								this.showSuccess(`${this.button}成功`)
 								this.show_dialog = false
 								if (!this.modify) {
 									this.queryMasterApps()
 								}
 								this.queryApps()
 							} else {
-								this.$message({
-									message: `${this.button}失敗`,
-									type: 'error',
-									showClose: true
-								})
+								this.showError(`${this.button}失敗`)
 							}
 						})
 					}
@@ -213,18 +205,10 @@
 				var msg = val.status === 0 ? '啟用' : '禁用'
 				disableApp(val.id, val.status).then(res => {
 					if (res.status === 200) {
-						this.$message({
-							message: `${msg}成功`,
-							type: `success`,
-							showClose: true
-						})
+						this.showSuccess(`${msg}成功`)
 					} else {
 						val.status = val.status === 0 ? 1 : 0
-						this.$message({
-							message: `${msg}失败`,
-							type: `error`,
-							showClose: true
-						})
+						this.showError(`${msg}失敗`)
 					}
 				})
 			},
@@ -245,18 +229,10 @@
 			saveParamClick: function(e) {
 				setAppParameters(this.appParam.appid, this.appParam.params).then(res => {
 					if (res.status === 200) {
-						this.$message({
-							message: `設置成功`,
-							type: 'success',
-							showClose: true
-						})
+						this.showSuccess(`設置成功`)
 						this.show_dialog_param = false
 					} else {
-						this.$message({
-							message: `設置失敗`,
-							type: `error`,
-							showClose: false
-						})
+						this.showError(`設置失敗`)
 					}
 				})
 			},
@@ -276,19 +252,11 @@
 				}).then(() => {
 					deleteApp(val.id).then(res => {
 						if (res.status === 200) {
-							this.$message({
-								message: '刪除成功',
-								type: 'success',
-								showClose: true
-							})
+							this.showSuccess(`刪除成功`)
 							this.queryApps()
 							this.queryMasterApps()
 						} else {
-							this.$message({
-								message: '刪除失敗',
-								type: 'error',
-								showClose: true
-							})
+							this.showError(`刪除失敗`)
 						}
 					})
 				})

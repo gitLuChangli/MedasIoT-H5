@@ -16,7 +16,7 @@
 					v-for="item in deviceTypes"
 					:key="item.id"
 					:label="item.model + item.name"
-					:value="item.model"
+					:value="item.id"
 				/>
 			</el-select>
 		</div>
@@ -26,6 +26,8 @@
 				<el-table-column prop="model" label="設備型號" width="150" />
 				<el-table-column prop="name" label="設備名稱" />
 				<el-table-column prop="details" label="設備詳情" />
+				<el-table-column prop="companyName" label="部門" align="center" />
+				<el-table-column prop="applicationName" label="應用" align="center" />
 				<el-table-column prop="version" label="產品版本" width="100" align="center" />
 				<el-table-column prop="firm_ver" label="固件版本" width="100" align="center" />
 				<el-table-column prop="soft_ver" label="軟件版本" width="100" align="center" />
@@ -48,6 +50,17 @@
 					</template>
 				</el-table-column>
 			</el-table>
+			<el-pagination
+				style="margin-top: 16px"
+				@size-change="queryByType"
+				@current-change="queryByType"
+				:current-page.sync="current_page"
+				:page-sizes="[10, 20, 30, 50]"
+				:page-size="page_size"
+				layout="total, prev, pager, next"
+				:hide-on-single-page="false"
+				:total="total"
+			/>
 		</div>
 		<el-dialog
 			:title="dialog_title_company"
@@ -65,11 +78,11 @@
 						clearable
 						v-model="deviceCompany.companyIds"
 						size="small"
-						:show-all-levels="false"
+						:show-all-levels="true"
 						style="width: 100%"
 					/>
 				</el-form-item>
-				<el-form-item>
+				<el-form-item style="text-align: center">
 					<el-button type="primary" @click="saveCompanyClick">設置</el-button>
 				</el-form-item>
 			</el-form>
@@ -126,7 +139,7 @@
 	</div>
 </template>
 <script>
-	import { queryDeviceTypes, adminQueryDeviceByModel, adminQueryDeviceByVersionId, queryCompanies, adminSetDeviceCompany, queryApps, deviceSetApplication, getAppParameters, deviceSetParameter } from '../../api/iot.js'
+	import { queryDeviceTypes, adminQueryDeviceByType, queryCompanies, adminSetDeviceCompany, queryApps, deviceSetApplication, getAppParameters, deviceSetParameter, queryAncestorIds } from '../../api/iot.js'
 	export default {
 		data() {
 			return {
@@ -147,7 +160,8 @@
 				cascader_props: {
 					label: 'name',
 					value: 'id',
-					children: 'descendants'
+					children: 'descendants',
+					checkStrictly: true
 				},
 				dialog_title_app: '',
 				show_dialog_app: false,
@@ -162,7 +176,7 @@
 				show_dialog_param: false,
 				devParams: {
 					params: []
-				},
+				}
 			}
 		},
 		mounted() {
@@ -188,16 +202,12 @@
 				})
 			},
 			queryByType() {
-				adminQueryDeviceByModel(this.deviceType, this.current_page - 1, this.page_size).then(res => {
+				adminQueryDeviceByType(this.deviceType, this.current_page - 1, this.page_size).then(res => {
 					if (res.status === 200) {
 						this.devices = res.data.data.content
 						this.total = res.data.data.totalElements
 					} else {
-						this.$message({
-							message: `查詢失敗`,
-							type: 'error',
-							showClose: true
-						})
+						this.showError(`查詢失敗`)
 					}
 				})
 			},
@@ -214,29 +224,35 @@
 				this.show_dialog_app = true
 			},
 			setCompanyClick: function (val) {
-				this.deviceCompany.deviceId = val.id
-				this.deviceCompany.companyIds = val.companyIds
-				this.dialog_title_company = `設置部門：${val.sn}`
-				this.show_dialog_company = true
+				if (val.companyId === '' || val.companyId === null) {
+					this.deviceCompany.deviceId = val.id
+					this.deviceCompany.companyIds = []
+					this.dialog_title_company = `設置部門：${val.sn}`
+					this.show_dialog_company = true
+				} else {
+					queryAncestorIds(val.companyId).then(res => {
+						if (res.status === 200) {
+							this.deviceCompany.deviceId = val.id
+							this.deviceCompany.companyIds = res.data.data
+							this.dialog_title_company = `設置部門：${val.sn}`
+							this.show_dialog_company = true
+						} else {
+							this.showError(`獲取部門層級關係失敗`)
+						}
+					})
+				}
 			},
 			setParameterClick: function (val) {
-				if (val.applicationId === '' || val.applicationId === undefined) {
-					this.$message({
-						message: `該設備還未設置應用`,
-						type: `error`,
-						showClose: true
-					})
+				if (val.applicationId === '' || val.applicationId === null) {
+					this.showError(`該設備還未設置應用`)
 					return
 				}
 				getAppParameters(val.applicationId).then(res => {
 					if (res.status === 200) {
-						console.log(val.parameter)
 						var obj = res.data.data
 						if (val.parameter !== '' && val.parameter !== null) {
 							var j = JSON.parse(val.parameter)
 							var n
-							var obj = res.data.data
-							console.log(`parameter`)
 							for (var i = 0; i < obj.length; i++) {
 								n = obj[i].name
 								console.log(n)
@@ -247,8 +263,8 @@
 							}
 							console.log(obj)
 						}
-						this.devParams.id = val.id
 						this.devParams.params = obj
+						this.devParams.id = val.id
 						this.show_dialog_param = true
 					}
 				})
@@ -256,11 +272,7 @@
 			saveCompanyClick: function (e) {
 				adminSetDeviceCompany(this.deviceCompany).then(res => {
 					if (res.status === 200) {
-						this.$message({
-							message: `設置成功`,
-							type: 'success',
-							showClose: true
-						})
+						this.showSuccess(`設置成功`)
 						this.show_dialog_company = false
 						this.queryByType()
 					}
@@ -271,51 +283,32 @@
 					if (valid) {
 						deviceSetApplication(this.deviceApp.deviceId, this.deviceApp.applicationId).then(res => {
 							if (res.status === 200) {
-								this.$message({
-									message: `設置成功`,
-									type: 'success',
-									showClose: true
-								})
+								this.showSuccess(`設置成功`)
 								this.show_dialog_app = false
 								this.queryByType()
 							} else {
-								this.$message({
-									message: `設置失敗`,
-									type: 'error',
-									showClose: true
-								})
+								this.showError(`設置失敗`)
 							}
 						})
 					}
 				})
 			},
 			saveParamClick: function (e) {
-				console.log(this.devParams.params)
-				return
 				var obj = {}
 				for (var i = 0; i < this.devParams.params.length; i++) {
 					obj[this.devParams.params[i].name] = this.devParams.params[i].value
 				}
 				deviceSetParameter(this.devParams.id, obj).then(res => {
 					if (res.status === 200) {
-						this.$message({
-							message: `設置成功`,
-							type: 'success',
-							showClose: true
-						})
+						this.showSuccess(`設置成功`)
 						this.queryByType()
 						this.show_dialog_param = false
 					} else {
-						this.$message({
-							message: `設置失敗`,
-							type: 'error',
-							showClose: true
-						})
+						this.showError(`設置失敗`)
 					}
 				})
 			},
-			change: function(e) { 
-				console.log(`change`)
+			change: function(e) {
 				this.$forceUpdate()
 			}
 		}

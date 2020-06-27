@@ -143,18 +143,10 @@
 					if (valid) {
 						adminAddDevices(this.device).then(res => {
 							if (res.status === 200) {
-								this.$message({
-									message: '錄入成功',
-									type: 'success',
-									showClose: true
-								})
+								this.showSuccess(`錄入成功`)
 								this.device.sns = []
 							} else {
-								this.$message({
-									message: '錄入失敗',
-									type: 'error',
-									showClose: true
-								})
+								this.showError(`錄入失敗`)
 							}
 						})
 					}

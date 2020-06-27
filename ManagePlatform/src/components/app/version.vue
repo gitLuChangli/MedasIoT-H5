@@ -162,21 +162,13 @@ export default {
                 if (valid) {
                     saveAppVersion(this.modify, this.version).then(res => {
                         if (res.status === 200) {
-                            this.$message({
-                                message: `${this.button}成功`,
-                                type: 'success',
-                                showClose: true
-                            })
+                            this.showSuccess(`${this.button}成功`)
                             if (this.appid === this.version.applicationId) {
                                 this.queryVersions()
                             }
                             this.show_dialog = false
                         } else {
-                            this.$message({
-                                message: `${this.button}失敗`,
-                                type: 'error',
-                                showClose: true
-                            })
+                            this.showError(`${this.button}失敗`)
                         }
                     })
                 }

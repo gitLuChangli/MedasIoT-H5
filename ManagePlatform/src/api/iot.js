@@ -73,9 +73,20 @@ export async function getCompanyById(companyId) {
  * 获取该部门的下属部门
  * @param {\\d+} companyId 部门编号
  */
-export async function getCompanyDescendantsById(companyId) {
+export async function queryCompanyDescendantsById(companyId) {
     return axios({
-        url: `/api/company/ancestor/${companyId}`,
+        url: `/api/company/descendants/${companyId}`,
+        method: `get`
+    })
+}
+
+/**
+ * 获取该部门的层级关系
+ * @param {*} companyId 部门编号
+ */
+export async function queryAncestorIds(companyId) {
+    return axios({
+        url: `/api/company/ancestors/${companyId}`,
         method: `get`
     })
 }
@@ -426,12 +437,12 @@ export async function adminAddDevices(device) {
 
 /**
  * 根据设备型号查询设备
- * @param {*} model 设备型号
+ * @param {*} type 设备型号编号
  * @param {*} page 页码
  * @param {*} size 页大小
  */
-export async function adminQueryDeviceByModel(model, page, size) {
-    var _url = `/api/admin/device/by/model/${model}?page=${page}&size=${size}`
+export async function adminQueryDeviceByType(type, page, size) {
+    var _url = `/api/admin/device/by/type/${type}?page=${page}&size=${size}`
     return axios({
         url: _url,
         method: `get`
@@ -461,6 +472,17 @@ export async function adminSetDeviceCompany(deviceCompany) {
         url: `/api/admin/device/set/company/`,
         method: `put`,
         data: deviceCompany
+    })
+}
+
+/**
+ * 根据应用查询设备
+ * @param {*} appid 应用编号
+ */
+export async function adminQueryDeviceByApplication(appid) {
+    return axios({
+        url: `/api/admin/device/by/app/${appid}`,
+        method: `get`
     })
 }
 
@@ -584,13 +606,38 @@ export async function deviceSetApplication(devid, appid) {
 
 /**
  * 给设备设置参数
- * @param {*} devid 
- * @param {*} parameter 
+ * @param {*} devid 设备编号
+ * @param {*} parameter 参数
  */
 export async function deviceSetParameter(devid, parameter) {
     return axios({
         url: `/api/device/set/parameter/${devid}`,
         method: `put`,
         data: parameter
+    })
+}
+
+/**
+ * 创建升级任务
+ * @param {*} task 升级任务
+ */
+export async function createUpdateTask(task) {
+    return axios({
+        url: `/api/update/task`,
+        method: `post`,
+        data: task
+    })
+}
+
+/**
+ * 查询升级记录
+ * @param {*} action ready：未升级，complete：已升级
+ * @param {*} page 页码
+ * @param {*} size 页面大小
+ */
+export async function queryUpdateRecords(action, page, size) {
+    return axios({
+        url: `/api/update/${action}?page=${page}&size=${size}`,
+        method: `get`
     })
 }
