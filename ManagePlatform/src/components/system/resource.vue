@@ -24,18 +24,17 @@
 				border
 				stripe
 				size="mini"
-				default-expand-all
 				:tree-props="{ children: 'descendants' }"
 			>
 				<el-table-column prop="name" label="ID" width="250" sortable />
-				<el-table-column prop="title" label="標題" />
-				<el-table-column prop="details" label="說明" />
+				<el-table-column prop="url" label="訪問地址" />
+				<el-table-column prop="title" label="標題" align="center" />
+				<el-table-column prop="details" label="說明" align="center" />
 				<el-table-column label="圖標" width="100px" align="center">
 					<template slot-scope="scope">
 						<i :class="scope.row.icon" />
 					</template>
 				</el-table-column>
-				<el-table-column prop="url" label="訪問地址" />
 				<el-table-column prop="index" label="順序" width="100" align="center" v-if="action === 'menu'" />
 				<el-table-column prop="method" label="訪問方式" align="center" v-if="action === 'button'" />
 				<el-table-column label="操作" align="center" fixed="right">
@@ -218,7 +217,7 @@
 				})
 			},
 			deleteClick: function (val) {
-				this.$confirm(`此操作將徹底刪除：<br /><strong>${val.name} / ${val.details}</strong><br />是否繼續？`, '提示', {
+				this.$confirm(`此操作將徹底刪除：<br /><strong>${val.name} / ${val.title}</strong><br />是否繼續？`, '提示', {
 					confirmButtonText: '刪除',
 					cancelButtonText: '取消',
 					type: 'warning',

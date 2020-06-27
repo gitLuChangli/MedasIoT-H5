@@ -118,16 +118,16 @@ export async function newUser(user) {
 /**
  * 查询用户
  * @param {*} companyId 部门编号
- * @param {*} status
- * @param {*} page
- * @param {*} size
+ * @param {*} status 0：正常用户，1：禁用用户，空：全部用户
+ * @param {*} page 页码
+ * @param {*} size 页面大小
  */
-export async function queryUsers(companyId, status, page, size) {
+export async function queryUsers(companyId, page, size) {
     var _url = ''
-    if (companyId === '' || companyId == undefined) {
-        _url = `${host}/api/user/status/${status}?page=${page}&size=${size}`
+    if (companyId === '' || companyId === null) {
+        _url = `/api/user/?page=${page}&size=${size}`
     } else {
-        _url = `${host}/api/user/company/${companyId}/${status}?page=${page}&size=${size}`
+        _url = `/api/user/company/${companyId}/?page=${page}&size=${size}`
     }
     return axios({
         url: _url,
@@ -142,7 +142,7 @@ export async function queryUsers(companyId, status, page, size) {
  */
 export async function disableUser(userid, disable) {
     return axios({
-        url: `${host}/api/user/disable/${userid}/${disable}`,
+        url: `/api/user/disable/${userid}/${disable}`,
         method: `put`
     })
 }
@@ -153,30 +153,21 @@ export async function disableUser(userid, disable) {
  */
 export async function deleteUser(userid) {
     return axios({
-        url: `${host}/api/user/${userid}`,
+        url: `/api/user/${userid}`,
         method: `delete`
     })
 }
 
 /**
- * 查询该用户所属部门的层级关系
- * @param {*} userid 用户编号
- */
-export async function queryCompanyRelations(userid) {
-    return axios({
-        url: `${host}/api/user/company/relations/${userid}`,
-        method: `get`
-    })
-}
-
-/**
- * 修改用户信息
+ * 新增、修改用户信息
+ * @param {*} modify true：修改，false：新增
  * @param {*} user  用户信息
  */
-export async function updateUser(user) {
+export async function saveUser(modify, user) {
+    var _method = modify ? 'put' : 'post'
     return axios({
-        url: `${host}/api/user/`,
-        method: `put`,
+        url: `/api/user/`,
+        method: _method,
         data: user
     })
 }
@@ -187,7 +178,7 @@ export async function updateUser(user) {
  */
 export async function resetPwd(userid) {
     return axios({
-        url: `${host}/api/user/reset_pwd/${userid}`,
+        url: `/api/user/reset_pwd/${userid}`,
         method: `put`
     })
 }

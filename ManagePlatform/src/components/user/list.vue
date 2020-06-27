@@ -4,77 +4,48 @@
 			<p class="title">用戶列表</p>
 		</div>
 		<div class="toolbar" style="text-align: center">
-			<el-select v-model="subgroupId" placeholder="請選擇次集團" size="mini" @change="subgroupChange">
-				<el-option v-for="item in subgroups" :key="item.id" :label="item.name" :value="item.id" />
-			</el-select>
-			<i class="el-icon-arrow-right" style="color: #c0c0c0" />
-			<el-select
-				v-model="businessGroupId"
-				placeholder="請選擇事業群"
-				size="mini"
-				style="width: 200px"
-				@change="buninessGroupChange"
-			>
-				<el-option v-for="item in businessGroups" :key="item.id" :label="item.name" :value="item.id" />
-			</el-select>
-			<i class="el-icon-arrow-right" style="color: #c0c0c0" />
-			<el-select
-				v-model="businessOfficeId"
-				placeholder="请选择事业处"
-				style="width: 200px"
-				size="mini"
-				@change="businessOfficeChange"
-			>
-				<el-option v-for="item in businessOffices" :key="item.id" :label="item.name" :value="item.id" />
-			</el-select>
-			<i class="el-icon-arrow-right" style="color: #c0c0c0" />
-			<el-select
-				v-model="companyId"
-				placeholder="请选择部门"
-				style="width: 250px"
-				size="mini"
+			所屬部門：
+			<el-cascader
+				:options="companies"
+				:props="cascader_props"
+				clearable
+				placeholder="請選擇部門"
+				v-model="companyIds"
+				size="small"
+				style="width: 500px"
 				@change="companyChange"
-			>
-				<el-option v-for="item in companies" :key="item.id" :label="item.name" :value="item.id" />
-			</el-select>
+			/>
+			<el-button
+				type="primary el-icon-plus"
+				circle
+				style="float: right"
+				size="mini"
+				@click="showNewClick"
+			/>
 		</div>
 		<div class="content">
 			<el-table :data="users" border stripe size="mini">
-				<el-table-column prop="no" label="工号" width="100" />
+				<el-table-column prop="no" label="工號" width="100" />
 				<el-table-column prop="name" label="姓名" align="center" width="130" />
-				<el-table-column prop="email" label="邮箱" align="center" />
-				<el-table-column prop="phone" label="电话" align="center" width="120" />
-				<el-table-column prop="ext" label="分机" align="center" width="100" />				
-				<el-table-column label="修改" width="60px" align="center" fixed="right">
+				<el-table-column prop="companyName" label="部門" align="center" />
+				<el-table-column prop="email" label="郵箱" align="center" />
+				<el-table-column prop="ext" label="分機" align="center" />
+				<el-table-column label="操作" width="200px" align="center" fixed="right">
 					<template slot-scope="scope">
-						<el-button
-							size="mini"
-							type="primary"
-							icon="el-icon-edit"
-							circle
-							@click="editClick(scope.row)"
-						/>
+						<el-button size="mini" type="text" @click="roleClick(scope.row)">角色</el-button>
+						<el-button size="mini" type="text" @click="editClick(scope.row)">修改</el-button>
+						<el-button size="mini" type="text" @click="resetClick(scope.row)">重置</el-button>
+						<el-button size="mini" type="text" @click="deleteClick(scope.row)">刪除</el-button>
 					</template>
 				</el-table-column>
-				<el-table-column label="重置" width="60px" align="center" fixed="right">
+				<el-table-column label="狀態" width="60px" align="center" fixed="right">
 					<template slot-scope="scope">
-						<el-button
-							size="mini"
-							type="warning"
-							icon="el-icon-lock"
-							circle
-							@click="resetClick(scope.row)"
-						/>
-					</template>
-				</el-table-column>
-				<el-table-column label="停用" width="60px" align="center" fixed="right">
-					<template slot-scope="scope">
-						<el-button
-							size="mini"
-							type="danger"
-							icon="el-icon-minus"
-							circle
-							@click="stopClick(scope.row)"
+						<el-switch
+							v-model="scope.row.status"
+							:width="32"
+							@change="handleDisableChange(scope.row)"
+							:active-value="0"
+							:inactive-value="1"
 						/>
 					</template>
 				</el-table-column>
@@ -91,28 +62,28 @@
 				:total="total"
 			/>
 			<el-dialog
-				title="修改用户信息"
-				:visible.sync="show_edit"
-				width="610px"
+				:title="dialog_title"
+				:visible.sync="show_dialog"
+				custom-class="dialog-n"
 				center
 				:close-on-click-modal="true"
 				:destroy-on-close="true"
 				top="16px"
 			>
 				<el-form ref="user" :model="user" label-position="left" size="small" :rules="rules">
-					<el-form-item label="请输入工号">
-						<el-input v-model="user.no" :readonly="true" />
+					<el-form-item label="工號" prop="no">
+						<el-input v-model="user.no" :readonly="modify" />
 					</el-form-item>
-					<el-form-item label="请输入姓名" prop="name">
+					<el-form-item label="姓名" prop="name">
 						<el-input v-model="user.name" />
 					</el-form-item>
-					<el-form-item label="请输入邮箱" prop="mail">
+					<el-form-item label="郵箱" prop="email">
 						<el-input v-model="user.email" />
 					</el-form-item>
-					<el-form-item label="请输入手机号">
+					<el-form-item label="手機號">
 						<el-input v-model="user.phone" />
 					</el-form-item>
-					<el-form-item label="请输入分机号">
+					<el-form-item label="分機號">
 						<el-input v-model="user.ext" />
 					</el-form-item>
 					<el-form-item label="微信openid">
@@ -121,18 +92,18 @@
 					<el-form-item label="香信openid">
 						<el-input v-model="user.icivetId" />
 					</el-form-item>
-					<el-form-item label="请选择部门">
+					<el-form-item label="所屬部門">
 						<el-cascader
 							v-model="user.companyIds"
-							:options="subgroups"
+							:options="companies"
 							style="width: 100%"
 							size="small"
 							:props="cascader_props"
 						></el-cascader>
 					</el-form-item>
 					<el-form-item>
-						<el-button type="primary" @click="saveClick">修改</el-button>
-						<el-button @click="show_edit = false">取消</el-button>
+						<el-button type="primary" @click="saveClick">{{button}}</el-button>
+						<el-button @click="show_dialog = false">取消</el-button>
 					</el-form-item>
 				</el-form>
 			</el-dialog>
@@ -141,25 +112,19 @@
 </template>
 <script>
 
-	import { getCompanies, queryUsers, updateUser, queryCompanyRelations, resetPwd, disableUser } from '../../api/iot.js'
+	import { queryCompanies, queryUsers, saveUser, queryAncestorIds, resetPwd, disableUser, deleteUser } from '../../api/iot.js'
 
 	export default {
 		data() {
 			return {
-				subgroups: [],
-				businessGroups: [],
-				businessOffices: [],
+				companyIds: [],
 				companies: [],
-				subgroupId: '',
-				businessGroupId: '',
-				businessOfficeId: '',
-				companyId: '',
 				current_page: 1,
 				page_size: 10,
 				total: 0,
 				users: [],
-
 				user: {
+					id: '',
 					no: '',
 					name: '',
 					email: '',
@@ -167,172 +132,151 @@
 					icivetId: '',
 					ext: '',
 					phone: '',
-					companyIds: []
+					companyIds: [],
+					companyId: ''
 				},
 				cascader_props: {
 					label: 'name',
 					value: 'id',
-					children: 'descendants'
+					children: 'descendants',
+					checkStrictly: true
 				},
-				show_edit: false,
+				show_dialog: false,
+				dialog_title: '',
+				button: '',
+				modify: false,
 
 				rules: {
-					name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-					mail: [{ required: true, message: '请输入邮箱', trigger: 'blur' }]
+					no: [{ required: true, message: '請輸入工號', trigger: 'blur' }],
+					name: [{ required: true, message: '請輸入姓名', trigger: 'blur' }],
+					email: [{ required: true, message: '請輸入郵箱', trigger: 'blur' }]
 				}
 			}
 		},
 		mounted() {
-			getCompanies().then(res => {
-				if (res.status == 200) {
-					this.subgroups = res.data.data
+			queryCompanies().then(res => {
+				if (res.status === 200) {
+					this.companies = res.data.data
 				}
 			})
 			this.queryUsers('')
 		},
 		methods: {
-			subgroupChange: function (val) {
-				for (var i = 0; i < this.subgroups.length; i++) {
-					if (this.subgroups[i].id == val) {
-						this.businessGroups = this.subgroups[i].descendants
-						this.businessOffices = []
-						this.companies = []
-						this.businessGroupId = ''
-						this.businessOfficeId = ''
-						this.companyId = ''
-						this.queryUsers()
-						break
-					}
-				}
-			},
-			buninessGroupChange: function (val) {
-				for (var i = 0; i < this.businessGroups.length; i++) {
-					if (this.businessGroups[i].id == val) {
-						this.businessOffices = this.businessGroups[i].descendants
-						this.companies = []
-						this.businessOfficeId = ''
-						this.companyId = ''
-						this.queryUsers()
-						break
-					}
-				}
-			},
-			businessOfficeChange: function (val) {
-				for (var i = 0; i < this.businessOffices.length; i++) {
-					if (this.businessOffices[i].id == val) {
-						this.companies = this.businessOffices[i].descendants
-						this.companyId = ''
-						this.queryUsers()
-						break
-					}
-				}
-			},
-			companyChange: function (val) {
+			companyChange: function(e) {
+				console.log(e)
 				this.queryUsers()
 			},
-			queryUsers() {
-				var val = ''
-				if (this.companyId != '') {
-					val = this.companyId
-				}
-				else if (this.businessOfficeId != '') {
-					val = this.businessOfficeId
-				}
-				else if (this.businessGroupId != '') {
-					val = this.businessGroupId
-				}
-				else if (this.subgroupId != '') {
-					val = this.subgroupId
-				}
-				this.users = []
-				queryUsers(val, 0, this.current_page - 1, this.page_size).then(res => {
-					if (res.status == 200) {
-						if (res.data.data !== undefined) {
-							this.users = res.data.data.content
-							this.total = res.data.data.totalElements
+			clearUser() {
+				this.user.id = ''
+				this.user.no = ''
+				this.user.name = ''
+				this.user.email = ''
+				this.user.openId = ''
+				this.user.icivetId = ''
+				this.user.ext = ''
+				this.user.phone = ''
+				this.user.companyIds = []
+				this.user.companyId = ''
+			},
+			showNewClick: function(e) {
+				this.clearUser()
+				this.button = '新增'
+				this.modify = false
+				this.dialog_title = `${this.button}用戶`
+				this.show_dialog = true
+			},
+			roleClick: function(val) {
 
-						} else {
-							this.users = []
-							this.total = 0
-						}	
+			},
+			editClick: function(val) {
+				this.user = Object.assign({}, val)
+				queryAncestorIds(val.companyId).then(res => {
+					if (res.status === 200) {
+						this.user.companyIds = res.data.data
+						this.button = `修改`
+						this.modify = true
+						this.dialog_title = `${this.button}用戶`
+						this.show_dialog = true
 					}
 				})
 			},
-			editClick: function (val) {
-				this.user = Object.assign({}, val)
-				this.queryCompanyRelations()
+			deleteClick: function(val) {
+				this.$confirm(`此操作將徹底刪除：<br /><strong>${val.no} ${val.name}</strong><br />是否繼續？`, '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning',
+						dangerouslyUseHTMLString: true
+					}).then(() => {
+						deleteUser(val.id).then(res => {
+							if (res.status === 200) {
+								this.showSuccess(`刪除成功`)
+								this.queryUsers()
+							} else {
+								this.showError(`刪除失敗`)
+							}
+						})
+					}
+				)
 			},
-			queryCompanyRelations() {
-				queryCompanyRelations(this.user.id).then(res => {
-					if (res.status == 200) {
-						this.user.companyIds = res.data.data
-						this.show_edit = true
-						console.log(this.user.companyIds)
+			queryUsers() {
+				var companyId = ''
+				if (this.companyIds.length > 0) {
+					companyId = this.companyIds[this.companyIds.length - 1]
+				}
+				this.users = []
+				queryUsers(companyId, this.current_page - 1, this.page_size).then(res => {
+					if (res.status === 200) {
+						if (res.data.data !== undefined) {
+							this.users = res.data.data.content
+							this.total = res.data.data.totalElements
+						} else {
+							this.users = []
+							this.total = 0
+						}
+					} else {
+						this.showError(`查詢失敗`)
 					}
 				})
 			},
 			resetClick: function (val) {
-				this.$confirm(`此操作将重置 ' ${val.no} ${val.name} ' 的密码，是否继续？`, '提示', {
+				this.$confirm(`此操作將重置：<br /><strong>${val.no} ${val.name}</strong><br />的密碼，是否繼續？`, '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
-					type: 'warning'
+					type: 'warning',
+					dangerouslyUseHTMLString: true
 				}).then(() => {
 					resetPwd(val.id).then(res => {
-						if (res.status == 200) {
-							this.$message({
-								type: 'success',
-								message: '重置成功',
-								showClose: true
-							})
+						if (res.status === 200) {
+							this.showSuccess(`重置成功`)
 						} else {
-							this.$message({
-								type: 'error',
-								message: '重置失败',
-								showClose: true
-							})
+							this.showError(`重置失敗`)
 						}
 					})
 				})
 			},
-			stopClick: function (val) {
-				this.$confirm(`此操作将停用 ' ${val.no} ${val.name} ' ，停用后将无法使用此系统，是否继续？`, '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				}).then(() => {
-					disableUser(val.id, 1).then(res => {
-						if (res.status == 200) {
-							this.$message({
-								message: '停用成功',
-								type: 'success',
-								showClose: true
-							})
-							this.queryUsers()
-						} else {
-							this.$message({
-								message: '停用失败',
-								type: 'error',
-								showClose: true
-							})
-						}
-					})
+			handleDisableChange: function (val) {
+				var msg = val.status === 1 ? '停用' : '啓用'
+				disableUser(val.id, val.status).then(res => {
+					if (res.status === 200) {
+						this.showSuccess(`${msg}成功`)
+						this.queryUsers()
+					} else {
+						this.showError(`${msg}失敗`)
+						val.status = val.status === 1 ? 0 : 1
+					}
 				})
 			},
 			saveClick: function (e) {
-				updateUser(this.user).then(res => {
-					if (res.status == 200) {
-						this.$message({
-							type: 'success',
-							message: '修改成功',
-							showClose: true
-						})
-						this.show_edit = false
-						this.queryUsers()
-					} else {
-						this.$message({
-							type: 'error',
-							message: '修改失败',
-							showClose: true
+				this.$refs.user.validate(valid => {
+					if (valid) {
+						saveUser(this.modify, this.user).then(res => {
+							if (res.status === 200) {
+								this.showSuccess(`${this.button}成功`)
+								this.queryUsers()
+								this.show_dialog = false
+							} else {
+								this.showError(`${this.button}失敗`)
+							}
 						})
 					}
 				})

@@ -122,14 +122,6 @@
 							{
 								name: '用戶列表',
 								path: '/user/'
-							},
-							{
-								name: '禁用列表',
-								path: '/user/disabled'
-							},
-							{
-								name: '新增用戶',
-								path: '/user/new'
 							}
 						]
 					},

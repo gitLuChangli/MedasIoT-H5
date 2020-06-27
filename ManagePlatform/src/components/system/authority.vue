@@ -167,6 +167,7 @@
 				++this.isResouceShow
 				this.authority.id = ''
 				this.authority.name = ''
+				this.authority.title = ''
 				this.authority.details = ''
 				this.authority.menuIds = []
 				this.authority.buttonIds = []
