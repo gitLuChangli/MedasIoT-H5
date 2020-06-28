@@ -236,20 +236,19 @@
 				this.currentPath.push(val2)
 			},
 			removeTab(targetName) {
-				let _tabs = this.tabs;
-				let activeName = this.focus_tab;
+				let _tabs = this.tabs
+				let activeName = this.focus_tab
 				if (activeName === targetName) {
 					_tabs.forEach((tab, index) => {
 						if (tab.name === targetName) {
 							let nextTab = _tabs[index + 1] || _tabs[index - 1]
 							if (nextTab) {
-								activeName = nextTab.name;
+								activeName = nextTab.name
 							}
 						}
 					})
 				}
-				
-				this.focus_tab = activeName;
+				this.focus_tab = activeName
 				this.tabs = _tabs.filter(tab => tab.name !== targetName)
 			}
 		}

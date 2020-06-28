@@ -32,13 +32,14 @@
 						:data="devices"
 						stripe
 						size="mini"
+						border
 						ref="multipleTable"
 						@selection-change="handleSelectionChange"
 					>
 						<el-table-column type="selection" width="55" />
-						<el-table-column prop="sn" label="設備編號" width="250" />
-						<el-table-column prop="model" label="設備型號" width="150" />
-						<el-table-column prop="name" label="設備名稱" width="200" />
+						<el-table-column prop="sn" label="設備編號" align="center" />
+						<el-table-column prop="model" label="設備型號" align="center" />
+						<el-table-column prop="name" label="設備名稱" align="center" />
 					</el-table>
 					<el-pagination
 						style="margin-top: 16px"

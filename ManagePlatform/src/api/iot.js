@@ -1,4 +1,5 @@
 import axios from 'axios'
+import qs from 'qs'
 
 /**
  * 创建/修改部门
@@ -183,6 +184,29 @@ export async function resetPwd(userid) {
     })
 }
 
+/**
+ * 设置角色
+ * @param {*} userRoles 用户及角色
+ */
+export async function setUserRoles(userRoles) {
+    return axios({
+        url: `/api/user/set/role`,
+        method: `put`,
+        data: userRoles
+    })
+}
+
+/**
+ * 获取用户菜单
+ * @param {*} userid 用户编号
+ */
+export async function queryUserResource(userid) {
+    return axios({
+        url: `/api/user/resource/${userid}`,
+        method: `get`
+    })
+}
+
 /** */
 
 /**
@@ -340,6 +364,20 @@ export async function disableRole(roleId, status) {
     return axios({
         url: `/api/role/disable/${roleId}/${status}`,
         method: `put`
+    })
+}
+
+/**
+ * 获取角色资源
+ * @param {*} roleIds 资源编号
+ */
+export async function queryRoleResources(roleIds) {
+    console.log(`123`)
+    console.log(roleIds)
+    return axios({
+        url: `/api/role/resource`,
+        method: 'post',
+        data: roleIds
     })
 }
 

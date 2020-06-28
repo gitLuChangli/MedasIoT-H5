@@ -107,12 +107,73 @@
 					</el-form-item>
 				</el-form>
 			</el-dialog>
+			<el-dialog
+				title="用户角色"
+				:visible.sync="show_dialog_role"
+				fullscreen
+				center
+				:close-on-click-modal="true"
+				:destroy-on-close="true"
+			>
+				<div style="width: 930px; margin: 0 auto;">
+					<el-card class="card-300">
+						<div slot="header">
+							<span>設置角色</span>
+							<el-button style="float: right;" size="mini" type="primary" @click="setRoleClick">保存</el-button>
+						</div>
+						<div>
+							<el-checkbox-group v-model="userRole.roleIds" size="small" @change="rolesChange">
+								<el-checkbox
+									v-for="item in roles"
+									:label="item.id"
+									:key="item.id"
+									border
+									style="width: 100%; margin: 2px 0;"
+								>{{item.title}}</el-checkbox>
+							</el-checkbox-group>
+						</div>
+					</el-card>
+					<el-card class="card-300">
+						<div slot="header" class="clearfix">
+							<span>菜單</span>
+						</div>
+						<div>
+							<el-menu
+								background-color="#393f4c"
+								text-color="#ebf6f7"
+								active-text-color="#ffffff"
+								style="border: none"
+								show-timeout="100"
+								hide-timeout="100"
+								:unique-opened="true"
+							>
+								<el-submenu :index="item.url" v-for="item in menus" :key="item.id">
+									<template slot="title">
+										<i :class="item.icon"></i>
+										<span>{{item.title}}</span>
+									</template>
+									<el-menu-item
+										v-for="item2 in item.descendants"
+										:key="item2.id"
+										:index="item2.url"
+									>{{item2.title}}</el-menu-item>
+								</el-submenu>
+							</el-menu>
+						</div>
+					</el-card>
+					<el-card class="card-300">
+						<div slot="header" class="clearfix">
+							<span>按鈕</span>
+						</div>
+					</el-card>
+				</div>
+			</el-dialog>
 		</div>
 	</div>
 </template>
 <script>
 
-	import { queryCompanies, queryUsers, saveUser, queryAncestorIds, resetPwd, disableUser, deleteUser } from '../../api/iot.js'
+	import { queryCompanies, queryUsers, saveUser, queryAncestorIds, resetPwd, disableUser, deleteUser, queryRoles, setUserRoles, queryRoleResources } from '../../api/iot.js'
 
 	export default {
 		data() {
@@ -150,7 +211,14 @@
 					no: [{ required: true, message: '請輸入工號', trigger: 'blur' }],
 					name: [{ required: true, message: '請輸入姓名', trigger: 'blur' }],
 					email: [{ required: true, message: '請輸入郵箱', trigger: 'blur' }]
-				}
+				},
+				show_dialog_role: false,
+				roles: [],
+				userRole: {
+					id: '',
+					roleIds: []
+				},
+				menus: []
 			}
 		},
 		mounted() {
@@ -163,7 +231,6 @@
 		},
 		methods: {
 			companyChange: function(e) {
-				console.log(e)
 				this.queryUsers()
 			},
 			clearUser() {
@@ -186,7 +253,14 @@
 				this.show_dialog = true
 			},
 			roleClick: function(val) {
-
+				this.userRole.id = val.id
+				queryRoles().then(res => {
+					if (res.status === 200) {
+						this.roles = res.data.data
+						this.show_dialog_role = true
+						console.log(this.roles)
+					}
+				})
 			},
 			editClick: function(val) {
 				this.user = Object.assign({}, val)
@@ -278,6 +352,23 @@
 								this.showError(`${this.button}失敗`)
 							}
 						})
+					}
+				})
+			},
+			setRoleClick: function(e) {
+				setUserRoles(this.userRole).then(res => {
+					if (res.status === 200) {
+						this.showSuccess(`設置成功`)
+					} else {
+						this.showError(`設置失敗`)
+					}
+				})
+			},
+			rolesChange: function(e) {
+				this.menus = []
+				queryRoleResources(this.userRole.roleIds).then(res => {
+					if (res.status === 200) {
+						this.menus = res.data.data.menus
 					}
 				})
 			}
