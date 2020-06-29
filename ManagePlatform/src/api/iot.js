@@ -212,11 +212,10 @@ export async function queryUserResource(userid) {
 /**
  * 新增/保存资源
  * @param {*} modify true：修改，false：新增
- * @param {*} action 资源类型
  * @param {*} res 资源
  */
-export async function saveResource(modify, action, res) {
-    var _url = `/api/${action}/`
+export async function saveResource(modify, res) {
+    var _url = `/api/res/`
     var _method = ''
     if (modify) {
         _method = `put`
@@ -232,11 +231,11 @@ export async function saveResource(modify, action, res) {
 
 /**
  * 获取资源
- * @param {*} action 资源类型
+ * @param {*} type 资源类型,0菜单，1按钮
  * @param {*} all 显示所有，包含禁用
  */
-export async function queryResources(action, all) {
-    var _url = `/api/${action}/descendants`
+export async function queryResources(type, all) {
+    var _url = `/api/res/descendants/type/${type}`
     if (all) {
         _url += '?all=true'
     }
@@ -248,12 +247,11 @@ export async function queryResources(action, all) {
 
 /**
  * 启用禁用资源
- * @param {*} action 资源类型
  * @param {*} resid 资源编号
  * @param {*} status 状态，1：禁用，0：启用
  */
-export async function disableResource(action, resid, status) {
-    var _url = `/api/${action}/disable/${resid}/${status}`
+export async function disableResource(resid, status) {
+    var _url = `/api/res/disable/${resid}/${status}`
     return axios({
         url: _url,
         method: `put`
@@ -265,8 +263,8 @@ export async function disableResource(action, resid, status) {
  * @param {*} action 资源类型
  * @param {*} resid 资源编号
  */
-export async function deleteResource(action, resid) {
-    var _url = `/api/${action}/${resid}`
+export async function deleteResource(resid) {
+    var _url = `/api/res/${resid}`
     return axios({
         url: _url,
         method: `delete`

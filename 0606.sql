@@ -83,67 +83,6 @@ INSERT INTO `tb_app_ver` VALUES (62486989483540480,'2020-06-21 18:20:59.373000',
 UNLOCK TABLES;
 
 --
--- Table structure for table `tb_button`
---
-
-DROP TABLE IF EXISTS `tb_button`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tb_button` (
-  `id` bigint(20) NOT NULL,
-  `create_on` datetime(6) DEFAULT NULL,
-  `details` varchar(255) DEFAULT NULL,
-  `icon` varchar(45) DEFAULT NULL,
-  `name` varchar(45) NOT NULL,
-  `status` int(11) DEFAULT NULL,
-  `url` varchar(255) DEFAULT NULL,
-  `method` varchar(45) DEFAULT NULL,
-  `title` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_button_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tb_button`
---
-
-LOCK TABLES `tb_button` WRITE;
-/*!40000 ALTER TABLE `tb_button` DISABLE KEYS */;
-INSERT INTO `tb_button` VALUES (57410030810431488,NULL,'新增部門','el-icon-plus','button_company_new',0,'/api/company/','POST','新增'),(57410377264136192,NULL,'修改部門','el-icon-edit','button_company_edit',0,'/api/company/','PUT','修改'),(57410870115827712,NULL,'禁用部門','el-icon-remove-outline','button_company_disable',0,'/api/company/disable/','PUT','禁用'),(57425509700599808,NULL,'刪除部門','el-icon-close','button_company_delete',0,'/api/company/','DELETE','删除'),(64717359973138432,NULL,'','','button_system_resource',0,'','','資源按鈕'),(64717865999138816,NULL,'','','button_system_company',0,'','','部門管理'),(64718658651291648,NULL,'新增菜單','primary el-icon-plus','button_menu_new',0,'/api/menu/','POST','新增'),(64725737394929664,NULL,'修改菜單','el-icon-edit','button_menu_edit',0,'/api/menu/','PUT','修改'),(64726019382181888,NULL,'刪除菜單','el-icon-close','button_menu_delete',0,'/api/menu/','DELETE','刪除'),(64726232394104832,NULL,'使能菜單','el-icon-remove-outline','button_menu_disable',0,'/api/menu/disable','PUT','使能'),(64726826232053760,NULL,'新增按鈕','el-icon-plus','button_button_new',0,'/api/button/','POST','新增'),(64726982134333440,NULL,'修改按鈕','el-icon-edit','button_button_edit',0,'/api/button/','PUT','修改'),(64727161809928192,NULL,'刪除按鈕','el-icon-close','button_button_delete',0,'/api/button/','DELETE','刪除'),(64727554312896512,NULL,'使能按鈕','el-icon-remove-outline','button_button_disable',0,'/api/button/','PUT','使能'),(64729345658191872,NULL,'','','button_user',0,'','','用戶按鈕'),(64729727885115392,NULL,'新增用戶','el-icon-plus','button_user_new',0,'/api/user/','POST','新增'),(64729923851386880,NULL,'修改用戶','el-icon-edit','button_user_edit',0,'/api/user/','PUT','修改'),(64730256740712448,NULL,'重置密碼','el-icon-refresh-right','button_user_reset',0,'/api/user/reset/','PUT','重置'),(64730423002923008,NULL,'刪除用戶','el-icon-close','button_user_delete',0,'/api/user/','DELETE','刪除'),(64730815581388800,NULL,'使能用戶','el-icon-remove-outline','button_user_disable',0,'/api/user/disable/','PUT','使能'),(64732445433397248,NULL,'','','button_dev_type',0,'','','應用類型按鈕'),(64732609233551360,NULL,'新增設備類型','el-icon-plus','button_dev_type_new',0,'/api/device/type/','POST','新增'),(64732794672119808,NULL,'修改設備類型','el-icon-edit','button_dev_type_edit',0,'/api/device/type/','PUT','修改'),(64733216287752192,NULL,'刪除設備類型','el-icon-close','button_dev_type_delete',0,'/api/device/type/','DELETE','刪除'),(64733434748076032,NULL,'使能設備類型','el-icon-remove-outline','button_dev_type_disable',0,'/api/device/type/disable/','PUT','使能'),(64734439120306176,NULL,'','','button_dev_ver',0,'','','設備版本按鈕'),(64734736995581952,NULL,'新增設備版本','el-icon-plus','button_dev_ver_new',0,'/api/device/version/','POST','新增'),(64735109005180928,NULL,'修改設備版本','el-icon-edit','button_dev_ver_edit',0,'/api/device/version/','PUT','修改'),(64735337888350208,NULL,'刪除設備版本','el-icon-close','button_dev_ver_delete',0,'/api/device/version/','DELETE','刪除'),(64735619451977728,NULL,'使能設備版本','el-icon-remove-outline','button_dev_ver_disable',0,'/api/device/version/disable','PUT','使能');
-/*!40000 ALTER TABLE `tb_button` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tb_button_relation`
---
-
-DROP TABLE IF EXISTS `tb_button_relation`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tb_button_relation` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ancestor` bigint(20) DEFAULT NULL,
-  `depth` int(11) DEFAULT NULL,
-  `descendant` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_button_relation` (`ancestor`,`descendant`),
-  KEY `idx_button_relation_ancestor` (`ancestor`),
-  KEY `idx_button_relation_descendant` (`descendant`)
-) ENGINE=InnoDB AUTO_INCREMENT=153 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tb_button_relation`
---
-
-LOCK TABLES `tb_button_relation` WRITE;
-/*!40000 ALTER TABLE `tb_button_relation` DISABLE KEYS */;
-INSERT INTO `tb_button_relation` VALUES (1,57406125863075840,0,57406125863075840),(6,57410679434379264,0,57410679434379264),(10,57421403388903424,0,57421403388903424),(34,64717359973138432,0,64717359973138432),(43,64717865999138816,0,64717865999138816),(53,64717359973138432,1,64718486353477632),(74,64727161809928192,0,64727161809928192),(75,64717359973138432,1,64727161809928192),(76,64717359973138432,1,64718658651291648),(77,64718658651291648,0,64718658651291648),(78,64717359973138432,1,64725737394929664),(79,64725737394929664,0,64725737394929664),(80,64717359973138432,1,64726019382181888),(81,64726019382181888,0,64726019382181888),(82,64717359973138432,1,64726232394104832),(83,64726232394104832,0,64726232394104832),(84,64717359973138432,1,64726826232053760),(85,64726826232053760,0,64726826232053760),(86,64717359973138432,1,64726982134333440),(87,64726982134333440,0,64726982134333440),(88,64727554312896512,0,64727554312896512),(89,64717359973138432,1,64727554312896512),(92,64717865999138816,1,57410030810431488),(93,57410030810431488,0,57410030810431488),(94,64717865999138816,1,57410377264136192),(95,57410377264136192,0,57410377264136192),(96,64717865999138816,1,57410870115827712),(97,57410870115827712,0,57410870115827712),(98,64717865999138816,1,57425509700599808),(99,57425509700599808,0,57425509700599808),(100,64729345658191872,0,64729345658191872),(103,64729345658191872,1,64729727885115392),(104,64729727885115392,0,64729727885115392),(105,64729923851386880,0,64729923851386880),(106,64729345658191872,1,64729923851386880),(107,64730256740712448,0,64730256740712448),(108,64729345658191872,1,64730256740712448),(109,64730423002923008,0,64730423002923008),(110,64729345658191872,1,64730423002923008),(111,64730815581388800,0,64730815581388800),(112,64729345658191872,1,64730815581388800),(113,64732445433397248,0,64732445433397248),(128,64734439120306176,0,64734439120306176),(133,64734736995581952,0,64734736995581952),(134,64734439120306176,1,64734736995581952),(135,64732445433397248,1,64732609233551360),(136,64732609233551360,0,64732609233551360),(137,64732445433397248,1,64732794672119808),(138,64732794672119808,0,64732794672119808),(139,64732445433397248,1,64733216287752192),(140,64733216287752192,0,64733216287752192),(141,64732445433397248,1,64733434748076032),(142,64733434748076032,0,64733434748076032),(145,64734439120306176,1,64735109005180928),(146,64735109005180928,0,64735109005180928),(149,64734439120306176,1,64735337888350208),(150,64735337888350208,0,64735337888350208),(151,64735619451977728,0,64735619451977728),(152,64734439120306176,1,64735619451977728);
-/*!40000 ALTER TABLE `tb_button_relation` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `tb_company`
 --
 
@@ -452,67 +391,6 @@ LOCK TABLES `tb_error_code` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `tb_menu`
---
-
-DROP TABLE IF EXISTS `tb_menu`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tb_menu` (
-  `id` bigint(20) NOT NULL,
-  `create_on` datetime(6) DEFAULT NULL,
-  `details` varchar(255) DEFAULT NULL,
-  `icon` varchar(100) DEFAULT NULL,
-  `name` varchar(255) NOT NULL,
-  `status` int(11) DEFAULT NULL,
-  `url` varchar(255) DEFAULT NULL,
-  `idx` int(11) DEFAULT NULL,
-  `title` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_menu_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tb_menu`
---
-
-LOCK TABLES `tb_menu` WRITE;
-/*!40000 ALTER TABLE `tb_menu` DISABLE KEYS */;
-INSERT INTO `tb_menu` VALUES (57038146436595712,'2020-06-06 17:29:13.831000','','el-icon-s-custom','menu_user',0,'/user',1,'用戶管理'),(57387567816900608,'2020-06-07 16:37:42.482000','','','menu_company_disabled',0,'/company/disabled',2,'禁用列表'),(64708401472471040,'2020-06-27 21:28:05.140000','','el-icon-s-promotion','menu_app',0,'',0,'應用管理'),(64708637112664064,'2020-06-27 21:29:01.318000','','','menu_app_list',0,'/app/list',1,'應用列表'),(64708764602728448,'2020-06-27 21:29:31.715000','','','menu_app_version',0,'/app/version',2,'應用版本'),(64709012037304320,'2020-06-27 21:30:30.708000','','','menu_app_task',0,'/app/task',3,'安排升級'),(64709151489523712,'2020-06-27 21:31:03.955000','','','menu_app_records',0,'/app/records',4,'升級記錄'),(64709249820786688,'2020-06-27 21:31:27.399000','','','menu_user_list',0,'/user/',1,'用戶列表'),(64709687035035648,'2020-06-27 21:33:11.638000','','el-icon-cpu','menu_device',0,'/device',0,'設備管理'),(64709823660294144,'2020-06-27 21:33:44.213000','','','menu_device_type',0,'/device/type',1,'設備類型'),(64710199159554048,'2020-06-27 21:35:13.739000','','','menu_device_version',0,'/device/version',2,'設備版本'),(64710418429378560,'2020-06-27 21:36:06.017000','','','menu_device_list',0,'/device/list',4,'設備列表'),(64710527057657856,'2020-06-27 21:36:31.915000','','','menu_device_data',0,'/device/data',5,'生產數據'),(64710710763978752,'2020-06-27 21:37:15.714000','','','menu_device_exception',0,'/device/exception',6,'異常數據'),(64710964972355584,'2020-06-27 21:38:16.322000','','el-icon-s-tools','menu_system',0,'/system',0,'系統管理'),(64711118173503488,'2020-06-27 21:38:52.849000','','','menu_system_resource',0,'/system/resource',1,'資源管理'),(64711257038520320,'2020-06-27 21:39:25.957000','','','menu_system_authority',0,'/system/authority',2,'權限管理'),(64711378295848960,'2020-06-27 21:39:54.867000','','','menu_system_role',0,'/system/role',3,'角色管理'),(64711481190514688,'2020-06-27 21:40:19.398000','','','menu_system_company',0,'/system/company',4,'部門管理'),(64712804866719744,'2020-06-27 21:45:34.989000','','','menu_device_add',0,'/device/add',3,'錄入設備');
-/*!40000 ALTER TABLE `tb_menu` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tb_menu_relation`
---
-
-DROP TABLE IF EXISTS `tb_menu_relation`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tb_menu_relation` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ancestor` bigint(20) DEFAULT NULL,
-  `depth` int(11) DEFAULT NULL,
-  `descendant` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_menu_relation` (`ancestor`,`descendant`),
-  KEY `idx_menu_relation_ancestor` (`ancestor`),
-  KEY `idx_menu_relation_descendant` (`descendant`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tb_menu_relation`
---
-
-LOCK TABLES `tb_menu_relation` WRITE;
-/*!40000 ALTER TABLE `tb_menu_relation` DISABLE KEYS */;
-INSERT INTO `tb_menu_relation` VALUES (1,57028864446038016,0,57028864446038016),(4,57038146436595712,0,57038146436595712),(7,57028864446038016,1,57387567816900608),(8,57387567816900608,0,57387567816900608),(9,64708401472471040,0,64708401472471040),(10,64708637112664064,0,64708637112664064),(11,64708401472471040,1,64708637112664064),(12,64708764602728448,0,64708764602728448),(13,64708401472471040,1,64708764602728448),(14,64709012037304320,0,64709012037304320),(15,64708401472471040,1,64709012037304320),(16,64709151489523712,0,64709151489523712),(17,64708401472471040,1,64709151489523712),(20,57038146436595712,1,64709249820786688),(21,64709249820786688,0,64709249820786688),(22,64709687035035648,0,64709687035035648),(23,64709823660294144,0,64709823660294144),(24,64709687035035648,1,64709823660294144),(25,64710199159554048,0,64710199159554048),(26,64709687035035648,1,64710199159554048),(29,64710418429378560,0,64710418429378560),(30,64709687035035648,1,64710418429378560),(33,64709687035035648,1,64710527057657856),(34,64710527057657856,0,64710527057657856),(35,64710710763978752,0,64710710763978752),(36,64709687035035648,1,64710710763978752),(37,64710964972355584,0,64710964972355584),(38,64711118173503488,0,64711118173503488),(39,64710964972355584,1,64711118173503488),(40,64711257038520320,0,64711257038520320),(41,64710964972355584,1,64711257038520320),(42,64711378295848960,0,64711378295848960),(43,64710964972355584,1,64711378295848960),(44,64711481190514688,0,64711481190514688),(45,64710964972355584,1,64711481190514688),(46,64709687035035648,1,64710324783153152),(47,64710324783153152,0,64710324783153152),(48,64712804866719744,0,64712804866719744),(49,64709687035035648,1,64712804866719744);
-/*!40000 ALTER TABLE `tb_menu_relation` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `tb_permission`
 --
 
@@ -537,62 +415,35 @@ CREATE TABLE `tb_permission` (
 
 LOCK TABLES `tb_permission` WRITE;
 /*!40000 ALTER TABLE `tb_permission` DISABLE KEYS */;
-INSERT INTO `tb_permission` VALUES (64731417417875456,'2020-06-27 22:59:32.566000','用戶信息的增、改、查、刪','authority_user_admin',0,'用戶管理員'),(64731681772273664,'2020-06-27 23:00:35.593000','查看用戶信息','authority_user_view',0,'查看用戶'),(64736525400670208,'2020-06-27 23:19:50.404000','類型、版本、錄入、升級、數據','authority_dev_admin',0,'設備管理員'),(64737262281162752,'2020-06-27 23:22:46.090000','查看設備、查看生產、異常數據','authority_dev_view',0,'查看設備');
+INSERT INTO `tb_permission` VALUES (65444213487042560,'2020-06-29 22:11:56.469000','用戶信息增刪改查','authority_user_admin',0,'用戶管理'),(65454375018954752,'2020-06-29 22:52:19.123000','應用、版本、升級、日志增刪改查','authority_app_admin',0,'應用管理');
 /*!40000 ALTER TABLE `tb_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `tb_permission_button`
+-- Table structure for table `tb_permission_res`
 --
 
-DROP TABLE IF EXISTS `tb_permission_button`;
+DROP TABLE IF EXISTS `tb_permission_res`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tb_permission_button` (
+CREATE TABLE `tb_permission_res` (
   `permission_id` bigint(20) NOT NULL,
-  `button_id` bigint(20) NOT NULL,
-  KEY `FK2yhi8oeis3wf8rli6c2llm6g8` (`button_id`),
-  KEY `FKsqilntlc4py6kd7x52cqxq2bk` (`permission_id`),
-  CONSTRAINT `FK2yhi8oeis3wf8rli6c2llm6g8` FOREIGN KEY (`button_id`) REFERENCES `tb_button` (`id`),
-  CONSTRAINT `FKsqilntlc4py6kd7x52cqxq2bk` FOREIGN KEY (`permission_id`) REFERENCES `tb_permission` (`id`)
+  `res_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`permission_id`,`res_id`),
+  KEY `FKdcdcnr9ir06hhnawwkojckqu8` (`res_id`),
+  CONSTRAINT `FKb6s8krrn933fd14l2igak537o` FOREIGN KEY (`permission_id`) REFERENCES `tb_permission` (`id`),
+  CONSTRAINT `FKdcdcnr9ir06hhnawwkojckqu8` FOREIGN KEY (`res_id`) REFERENCES `tb_res` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `tb_permission_button`
+-- Dumping data for table `tb_permission_res`
 --
 
-LOCK TABLES `tb_permission_button` WRITE;
-/*!40000 ALTER TABLE `tb_permission_button` DISABLE KEYS */;
-INSERT INTO `tb_permission_button` VALUES (64731417417875456,64729727885115392),(64731417417875456,64729923851386880),(64731417417875456,64730256740712448),(64731417417875456,64730423002923008),(64731417417875456,64730815581388800),(64736525400670208,64732609233551360),(64736525400670208,64732794672119808),(64736525400670208,64733216287752192),(64736525400670208,64733434748076032),(64736525400670208,64734736995581952),(64736525400670208,64735109005180928),(64736525400670208,64735337888350208),(64736525400670208,64735619451977728);
-/*!40000 ALTER TABLE `tb_permission_button` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tb_permission_menu`
---
-
-DROP TABLE IF EXISTS `tb_permission_menu`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tb_permission_menu` (
-  `permission_id` bigint(20) NOT NULL,
-  `menu_id` bigint(20) NOT NULL,
-  KEY `FKc03g80a0k4uljt3hx5198ja8a` (`menu_id`),
-  KEY `FKk6ig97k7mk15l7lp2mgxhwlkj` (`permission_id`),
-  CONSTRAINT `FKc03g80a0k4uljt3hx5198ja8a` FOREIGN KEY (`menu_id`) REFERENCES `tb_menu` (`id`),
-  CONSTRAINT `FKk6ig97k7mk15l7lp2mgxhwlkj` FOREIGN KEY (`permission_id`) REFERENCES `tb_permission` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tb_permission_menu`
---
-
-LOCK TABLES `tb_permission_menu` WRITE;
-/*!40000 ALTER TABLE `tb_permission_menu` DISABLE KEYS */;
-INSERT INTO `tb_permission_menu` VALUES (64731417417875456,57038146436595712),(64731417417875456,64709249820786688),(64731681772273664,57038146436595712),(64731681772273664,64709249820786688),(64736525400670208,64709687035035648),(64736525400670208,64709823660294144),(64736525400670208,64710199159554048),(64736525400670208,64710418429378560),(64736525400670208,64710527057657856),(64736525400670208,64710710763978752),(64736525400670208,64712804866719744),(64737262281162752,64709687035035648),(64737262281162752,64710418429378560),(64737262281162752,64710527057657856),(64737262281162752,64710710763978752);
-/*!40000 ALTER TABLE `tb_permission_menu` ENABLE KEYS */;
+LOCK TABLES `tb_permission_res` WRITE;
+/*!40000 ALTER TABLE `tb_permission_res` DISABLE KEYS */;
+INSERT INTO `tb_permission_res` VALUES (65444213487042560,65432848789667840),(65444213487042560,65433614363394048),(65454375018954752,65433768038498304),(65454375018954752,65434165050343424),(65454375018954752,65434279680671744),(65454375018954752,65434520383389696),(65454375018954752,65434684686860288),(65444213487042560,65434922684252160),(65444213487042560,65437955338010624),(65444213487042560,65438447006908416),(65444213487042560,65438572638896128),(65444213487042560,65438834988417024),(65444213487042560,65439007378505728);
+/*!40000 ALTER TABLE `tb_permission_res` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -625,6 +476,68 @@ INSERT INTO `tb_property_item` VALUES (62436637015015424,'單位秒','interval_c
 UNLOCK TABLES;
 
 --
+-- Table structure for table `tb_res`
+--
+
+DROP TABLE IF EXISTS `tb_res`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tb_res` (
+  `id` bigint(20) NOT NULL,
+  `details` varchar(255) DEFAULT NULL,
+  `icon` varchar(100) DEFAULT NULL,
+  `idx` int(11) DEFAULT NULL,
+  `method` varchar(45) DEFAULT NULL,
+  `name` varchar(45) NOT NULL,
+  `status` int(11) DEFAULT NULL,
+  `title` varchar(45) NOT NULL,
+  `type` int(11) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_res_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tb_res`
+--
+
+LOCK TABLES `tb_res` WRITE;
+/*!40000 ALTER TABLE `tb_res` DISABLE KEYS */;
+INSERT INTO `tb_res` VALUES (65432848789667840,'','el-icon-s-custom',0,'GET','menu_user',0,'用戶管理',0,'GET'),(65433614363394048,'','',1,'GET','menu_list',0,'用戶列表',0,'/user/'),(65433768038498304,'','el-icon-s-promotion',2,'GET','menu_app',0,'應用管理',0,'GET'),(65434165050343424,'','',1,'GET','menu_app_list',0,'應用列表',0,'/app/list'),(65434279680671744,'','',2,'GET','menu_app_version',0,'應用版本',0,'/app/version'),(65434520383389696,'','',3,'GET','menu_app_task',0,'安排升級',0,'/app/task'),(65434684686860288,'','',4,'GET','menu_app_records',0,'升級記錄',0,'/app/records'),(65434922684252160,'','',1,'','button_user',0,'用戶管理按鈕',1,''),(65437955338010624,'新增用戶','el-icon-plus',0,'POST','button_user_new',0,'新增',1,'/api/user/'),(65438447006908416,'修改角色信息','el-icon-edit',1,'PUT','button_user_role',0,'角色',1,'/api/user/set/role'),(65438572638896128,'修改用戶信息','el-icon-edit',2,'PUT','button_user_edit',0,'修改',1,'/api/user/'),(65438834988417024,'重置密碼','el-icon-edit',3,'PUT','button_user_reset',0,'重置',1,'/api/user/reset_pwd'),(65439007378505728,'刪除用戶','el-icon-close',5,'DELETE','button_user_delete',0,'刪除',1,'/api/user/');
+/*!40000 ALTER TABLE `tb_res` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tb_res_relation`
+--
+
+DROP TABLE IF EXISTS `tb_res_relation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tb_res_relation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ancestor` bigint(20) DEFAULT NULL,
+  `depth` int(11) DEFAULT NULL,
+  `descendant` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_res_relation` (`ancestor`,`descendant`),
+  KEY `idx_res_relation_ancestor` (`ancestor`),
+  KEY `idx_res_relation_descendant` (`descendant`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tb_res_relation`
+--
+
+LOCK TABLES `tb_res_relation` WRITE;
+/*!40000 ALTER TABLE `tb_res_relation` DISABLE KEYS */;
+INSERT INTO `tb_res_relation` VALUES (1,65432848789667840,0,65432848789667840),(2,65433614363394048,0,65433614363394048),(3,65432848789667840,1,65433614363394048),(4,65433768038498304,0,65433768038498304),(5,65434165050343424,0,65434165050343424),(6,65433768038498304,1,65434165050343424),(7,65434279680671744,0,65434279680671744),(8,65433768038498304,1,65434279680671744),(9,65434520383389696,0,65434520383389696),(10,65433768038498304,1,65434520383389696),(11,65434684686860288,0,65434684686860288),(12,65433768038498304,1,65434684686860288),(13,65434922684252160,0,65434922684252160),(15,65437955338010624,0,65437955338010624),(16,65434922684252160,1,65437955338010624),(17,65438447006908416,0,65438447006908416),(18,65434922684252160,1,65438447006908416),(19,65438572638896128,0,65438572638896128),(20,65434922684252160,1,65438572638896128),(21,65438834988417024,0,65438834988417024),(22,65434922684252160,1,65438834988417024),(23,65439007378505728,0,65439007378505728),(24,65434922684252160,1,65439007378505728);
+/*!40000 ALTER TABLE `tb_res_relation` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `tb_role`
 --
 
@@ -650,7 +563,7 @@ CREATE TABLE `tb_role` (
 
 LOCK TABLES `tb_role` WRITE;
 /*!40000 ALTER TABLE `tb_role` DISABLE KEYS */;
-INSERT INTO `tb_role` VALUES (64736693365768192,'2020-06-27 23:20:30.456000','','role_system_admin',0,'系統管理員'),(64737358171340800,'2020-06-27 23:23:08.952000','查看用戶、查看設備基本信息','role_user',0,'基本用戶');
+INSERT INTO `tb_role` VALUES (65447168164495360,'2020-06-29 22:23:40.879000','','role_admin',0,'系統管理員');
 /*!40000 ALTER TABLE `tb_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -677,7 +590,7 @@ CREATE TABLE `tb_role_permission` (
 
 LOCK TABLES `tb_role_permission` WRITE;
 /*!40000 ALTER TABLE `tb_role_permission` DISABLE KEYS */;
-INSERT INTO `tb_role_permission` VALUES (64736693365768192,64731417417875456),(64736693365768192,64731681772273664),(64736693365768192,64736525400670208),(64737358171340800,64731681772273664),(64737358171340800,64737262281162752);
+INSERT INTO `tb_role_permission` VALUES (65447168164495360,65444213487042560),(65447168164495360,65454375018954752);
 /*!40000 ALTER TABLE `tb_role_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -801,6 +714,7 @@ CREATE TABLE `tb_user_role` (
 
 LOCK TABLES `tb_user_role` WRITE;
 /*!40000 ALTER TABLE `tb_user_role` DISABLE KEYS */;
+INSERT INTO `tb_user_role` VALUES (56305110317268992,65447168164495360);
 /*!40000 ALTER TABLE `tb_user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -813,4 +727,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-27 23:35:31
+-- Dump completed on 2020-06-29 22:55:24

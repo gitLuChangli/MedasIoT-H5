@@ -165,6 +165,7 @@
 						<div slot="header" class="clearfix">
 							<span>按鈕</span>
 						</div>
+						<el-tree :data="buttons" :props="tree_props"></el-tree>
 					</el-card>
 				</div>
 			</el-dialog>
@@ -202,6 +203,10 @@
 					children: 'descendants',
 					checkStrictly: true
 				},
+				tree_props: {
+					children: 'descendants',
+					label: 'title'
+				},
 				show_dialog: false,
 				dialog_title: '',
 				button: '',
@@ -218,7 +223,8 @@
 					id: '',
 					roleIds: []
 				},
-				menus: []
+				menus: [],
+				buttons: []
 			}
 		},
 		mounted() {
@@ -369,6 +375,7 @@
 				queryRoleResources(this.userRole.roleIds).then(res => {
 					if (res.status === 200) {
 						this.menus = res.data.data.menus
+						this.buttons = res.data.data.buttons
 					}
 				})
 			}

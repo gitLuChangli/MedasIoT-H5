@@ -95,9 +95,8 @@
 					<el-cascader
 						v-model="authority.buttonIds"
 						:options="buttons"
-						:key="isResouceShow"
 						style="width: 100%"
-						:props="cascader_props2"
+						:props="cascader_props"
 						clearable
 					></el-cascader>
 				</el-form-item>
@@ -136,26 +135,19 @@
 					checkStrictly: true,
 					multiple: true
 				},
-				cascader_props2: {
-					label: 'title',
-					value: 'id',
-					children: 'descendants',
-					multiple: true
-				},
 				rules: {
 					name: [{ required: true, message: '請輸入ID', trigger: 'blur' }],
 					title: [{ required: true, message: '請輸入標題', trigger: 'blur' }]
-				},
-				isResouceShow: 0
+				}
 			}
 		},
 		mounted() {
-			queryResources('menu', true).then(res => {
+			queryResources('0', true).then(res => {
 				if (res.status === 200) {
 					this.menus = res.data.data
 				}
 			})
-			queryResources('button', true).then(res => {
+			queryResources('1', true).then(res => {
 				if (res.status === 200) {
 					this.buttons = res.data.data
 				}
@@ -164,7 +156,6 @@
 		},
 		methods: {
 			clearForm() {
-				++this.isResouceShow
 				this.authority.id = ''
 				this.authority.name = ''
 				this.authority.title = ''
@@ -179,7 +170,6 @@
 				this.dialog_title = `${this.button}權限`
 				this.show_dialog = true
 				this.modify = false
-				this.isResouceShow = 0
 			},
 			handleDisableChange: function (val) {
 				var _msg = val.status === 1 ? '禁用' : '啟用'
