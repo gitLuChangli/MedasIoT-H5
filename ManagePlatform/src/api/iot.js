@@ -202,7 +202,7 @@ export async function setUserRoles(userRoles) {
  */
 export async function queryUserResource(userid) {
     return axios({
-        url: `/api/user/resource/${userid}`,
+        url: `/api/user/resources/${userid}`,
         method: `get`
     })
 }

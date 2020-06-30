@@ -114,6 +114,7 @@
 				center
 				:close-on-click-modal="true"
 				:destroy-on-close="true"
+				@opened="dialogOpened"
 			>
 				<div style="width: 930px; margin: 0 auto;">
 					<el-card class="card-300">
@@ -174,7 +175,7 @@
 </template>
 <script>
 
-	import { queryCompanies, queryUsers, saveUser, queryAncestorIds, resetPwd, disableUser, deleteUser, queryRoles, setUserRoles, queryRoleResources } from '../../api/iot.js'
+	import { queryCompanies, queryUsers, saveUser, queryAncestorIds, resetPwd, disableUser, deleteUser, queryRoles, setUserRoles, queryRoleResources, queryUserResource } from '../../api/iot.js'
 
 	export default {
 		data() {
@@ -234,9 +235,14 @@
 				}
 			})
 			this.queryUsers('')
+			queryRoles().then(res => {
+				if (res.status === 200) {
+					this.roles = res.data.data
+				}
+			})
 		},
 		methods: {
-			companyChange: function(e) {
+			companyChange: function (e) {
 				this.queryUsers()
 			},
 			clearUser() {
@@ -251,24 +257,19 @@
 				this.user.companyIds = []
 				this.user.companyId = ''
 			},
-			showNewClick: function(e) {
+			showNewClick: function (e) {
 				this.clearUser()
 				this.button = '新增'
 				this.modify = false
 				this.dialog_title = `${this.button}用戶`
 				this.show_dialog = true
 			},
-			roleClick: function(val) {
+			roleClick: function (val) {
 				this.userRole.id = val.id
-				queryRoles().then(res => {
-					if (res.status === 200) {
-						this.roles = res.data.data
-						this.show_dialog_role = true
-						console.log(this.roles)
-					}
-				})
+				this.userRole.roleIds = []
+				this.show_dialog_role = true
 			},
-			editClick: function(val) {
+			editClick: function (val) {
 				this.user = Object.assign({}, val)
 				queryAncestorIds(val.companyId).then(res => {
 					if (res.status === 200) {
@@ -280,22 +281,22 @@
 					}
 				})
 			},
-			deleteClick: function(val) {
+			deleteClick: function (val) {
 				this.$confirm(`此操作將徹底刪除：<br /><strong>${val.no} ${val.name}</strong><br />是否繼續？`, '提示', {
-						confirmButtonText: '确定',
-						cancelButtonText: '取消',
-						type: 'warning',
-						dangerouslyUseHTMLString: true
-					}).then(() => {
-						deleteUser(val.id).then(res => {
-							if (res.status === 200) {
-								this.showSuccess(`刪除成功`)
-								this.queryUsers()
-							} else {
-								this.showError(`刪除失敗`)
-							}
-						})
-					}
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning',
+					dangerouslyUseHTMLString: true
+				}).then(() => {
+					deleteUser(val.id).then(res => {
+						if (res.status === 200) {
+							this.showSuccess(`刪除成功`)
+							this.queryUsers()
+						} else {
+							this.showError(`刪除失敗`)
+						}
+					})
+				}
 				)
 			},
 			queryUsers() {
@@ -361,7 +362,7 @@
 					}
 				})
 			},
-			setRoleClick: function(e) {
+			setRoleClick: function (e) {
 				setUserRoles(this.userRole).then(res => {
 					if (res.status === 200) {
 						this.showSuccess(`設置成功`)
@@ -370,12 +371,26 @@
 					}
 				})
 			},
-			rolesChange: function(e) {
+			rolesChange: function (e) {
 				this.menus = []
+				this.buttons = []
+				console.log(this.userRole.roleIds)
 				queryRoleResources(this.userRole.roleIds).then(res => {
 					if (res.status === 200) {
 						this.menus = res.data.data.menus
 						this.buttons = res.data.data.buttons
+					}
+				})
+			},
+			dialogOpened: function (e) {
+				queryUserResource(this.userRole.id).then(res => {
+					if (res.status === 200) {						
+						this.menus = res.data.data.menus
+						this.buttons = res.data.data.buttons
+						this.userRole.roleIds = res.data.data.roleIds
+						this.$nextTick(()=>{
+							console.log(`next tick`)	
+						})
 					}
 				})
 			}
