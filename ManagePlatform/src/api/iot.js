@@ -373,7 +373,7 @@ export async function queryRoleResources(roleIds) {
     console.log(`123`)
     console.log(roleIds)
     return axios({
-        url: `/api/role/resource`,
+        url: `/api/role/resources`,
         method: 'post',
         data: roleIds
     })

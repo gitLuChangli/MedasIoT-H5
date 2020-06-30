@@ -123,15 +123,9 @@
 							<el-button style="float: right;" size="mini" type="primary" @click="setRoleClick">保存</el-button>
 						</div>
 						<div>
-							<el-checkbox-group v-model="userRole.roleIds" size="small" @change="rolesChange">
-								<el-checkbox
-									v-for="item in roles"
-									:label="item.id"
-									:key="item.id"
-									border
-									style="width: 100%; margin: 2px 0;"
-								>{{item.title}}</el-checkbox>
-							</el-checkbox-group>
+							<el-select v-model="userRole.roleIds" multiple placeholder="请选择" @change="rolesChange" style="width: 100%">
+								<el-option v-for="item in roles" :key="item.id" :label="item.title" :value="item.id"></el-option>
+							</el-select>
 						</div>
 					</el-card>
 					<el-card class="card-300">
@@ -384,13 +378,11 @@
 			},
 			dialogOpened: function (e) {
 				queryUserResource(this.userRole.id).then(res => {
-					if (res.status === 200) {						
+					if (res.status === 200) {
 						this.menus = res.data.data.menus
 						this.buttons = res.data.data.buttons
 						this.userRole.roleIds = res.data.data.roleIds
-						this.$nextTick(()=>{
-							console.log(`next tick`)	
-						})
+						console.log(this.userRole.roleIds)
 					}
 				})
 			}
