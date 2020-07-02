@@ -33,6 +33,16 @@ axios.interceptors.response.use(response => {
         return response
     },
     error => {
+        console.log(error.response.status)
+        if (error.response.status === 401) {
+            self.location = '/#/login'
+        } else if (error.response.status === 403) {
+            ElementUI.Message({
+                message: '無權訪問',
+                type: 'error',
+                showClose: true
+            })
+        }
         return error
     })
 

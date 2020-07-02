@@ -226,12 +226,12 @@
 			queryCompanies().then(res => {
 				if (res.status === 200) {
 					this.companies = res.data.data
-				}
-			})
-			this.queryUsers('')
-			queryRoles().then(res => {
-				if (res.status === 200) {
-					this.roles = res.data.data
+					queryRoles().then(res => {
+					if (res.status === 200) {
+						this.roles = res.data.data
+						this.queryUsers('')
+					}
+				})
 				}
 			})
 		},
