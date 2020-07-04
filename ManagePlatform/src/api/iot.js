@@ -1,5 +1,4 @@
 import axios from 'axios'
-import qs from 'qs'
 
 /**
  * 创建/修改部门
