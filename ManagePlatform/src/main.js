@@ -29,8 +29,6 @@ Vue.prototype.RES_URL = 'http://127.0.0.1:8081'
 
 axios.defaults.baseURL = 'http://127.0.0.1:8081'
 axios.defaults.withCredentials = true
-axios.defaults.headers['Origin'] = 'http://127.0.0.1:9001'
-axios.defaults.headers['Content-Type'] = 'application/json'
 
 axios.interceptors.response.use(response => {
         console.log(response)
@@ -39,7 +37,7 @@ axios.interceptors.response.use(response => {
     error => {
         console.log(error.response.status)
         if (error.response.status === 401) {
-            self.location = '/#/login'
+            //self.location = '/#/login'
         } else if (error.response.status === 403) {
             ElementUI.Message({
                 message: '無權訪問',

@@ -222,6 +222,12 @@
 		},
 		mounted() {
 			this.active = this.$route.path
+			this.$axios({
+				url: '/user/?no=W0515366',
+				method: `get`
+			}).then(res => {
+				console.log(res)
+			})
 		},
 		methods: {
 			navClick: function (e) {

@@ -11,13 +11,14 @@ module.exports = {
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         proxyTable: {
-            '/': {
-                target: 'http://127.0.0.1:8081',
-                changeOrigin: true,
-                pathRewrite: {
-                    '^/': ''
-                }
-            }
+            // '/**': {
+            //     target: 'http://127.0.0.1:8081',
+            //     changeOrigin: true
+            // },
+            // '/favicon.ico': {
+            //     target: 'http://127.0.0.1:9001',
+            //     changeOrigin: true
+            // }
         },
 
         // Various Dev Server settings

@@ -127,8 +127,8 @@ export default {
     data() {
         return {
             form: {
-                username: '',
-                password: '',
+                username: 'W0515366',
+                password: '12345678',
                 vcode: ''
             },
             verCode: '',
@@ -151,7 +151,7 @@ export default {
                 newpwd: '',
                 newpwd2: ''
             },
-            expired: true
+            expired: false
         }
 	},
 	mounted() {
@@ -165,7 +165,7 @@ export default {
             this.$refs.form.validate(valid => {
                 if (valid) {
                     this.$axios({
-                        url: `/auth/login`,
+						url: `/auth/login`,
                         method: `post`,
 						data: this.form
                     }).then(res => {
@@ -174,10 +174,10 @@ export default {
                             switch (res.data.status) {
                                 case 200:
                                     self.location = '/'
-                                    break                               
+                                    break
                                 case 1001:
                                     this.showError('需要修改密碼')
-									this.user.username = this.form.username									
+									this.user.username = this.form.username
 									this.user.newpwd = ''
 									this.user.newpwd2 = ''
                                     this.expired = true
